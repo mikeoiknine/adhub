@@ -1,3 +1,35 @@
-<p>
-  ad-uploader works!
-</p>
+<p class="upload-ad-title">Upload Ad</p>
+<form [formGroup]="uploadForm" class="upload-form">
+
+
+    <mat-form-field class="field-holder" appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Ad name" formControlName="nameController">
+    </mat-form-field>
+
+    <mat-form-field class="field-holder">
+      <mat-label>Favorite food</mat-label>
+      <mat-select formControlName="typeController">
+        <mat-option *ngFor="let type of types" [value]="type">
+          {{type}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+  <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="uploadFile($event)">
+    <input hidden type="file" #fileInput (change)="uploadFile($event.target.files)">
+  </div>
+
+  <div *ngIf="file" class="files-list">
+    <p class="file-name"> {{ file.name }} </p>
+    <button mat-icon-button class="delete-file" (click)="deleteAttachment(i)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</form>
+
+<span class="button-holder">
+  <button mat-flat-button color="primary" (click)="closeDialog(false)">Cancel</button>
+  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="uploadForm.invalid">Save</button>
+</span>

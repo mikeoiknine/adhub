@@ -1,3 +1,54 @@
-<p>
-  dashboard works!
-</p>
+<div class="body">
+  <mat-toolbar>
+    <span>Adhub</span>
+  </mat-toolbar>
+
+
+  <div class="inner-body">
+    <p class="title-ads">Active Ads</p>
+
+    <mat-divider></mat-divider>
+
+
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let ad of ads">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ad.name}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ad.uploadedDate | date:'medium' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="expansion-description">
+          <span>
+            Ad Info
+          <ul class="ad-info">
+            <li>Id: {{ad.name}}</li>
+            <li>Name: {{ad.id}}</li>
+            <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
+          </ul>
+            </span>
+          <span>
+            Ad Stats
+          <ul class="ad-info">
+            <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
+            <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
+            <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
+          </ul>
+            </span>
+            <img class="ad-image" src="{{ad.image_64}}" width="20%">
+        </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <span class="button-container-footer">
+    <button mat-fab>View</button>
+    <button mat-fab (click)="openAdUploadDialog()" >Upload</button>
+  </span>
+  </div>
+</div>
+
+

@@ -1,19 +1,25 @@
-<div class="login-card-container">
+<div class="flex-container">
+
   <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-header>
-        <mat-card-title>Login</mat-card-title>
-      </mat-card-header>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Placeholder">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput placeholder="Placeholder">
-      </mat-form-field>
-    </mat-card-content>
+    <div class="action-container">
+
+      <h2 class="adhub-name">AdHub</h2>
+      <form [formGroup]="loginForm" class="action-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="twat@twat.com" formControlName="emailController">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Enter your password" [type]="hide_Password ? 'password' : 'text'" formControlName="passwordController">
+          <mat-icon class="cursor-pointer" matSuffix (mousedown)="showPassword()" (mouseup)="hidePassword()">{{hide_Password ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" (click)="sendLoginCredentials()" [disabled]="loginForm.invalid || loginForm.pristine">Login</button>
+        <p class="register-link-container">or <a routerLink="/register">Register</a></p>
+      </form>
+    </div>
   </mat-card>
+
 </div>
