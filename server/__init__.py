@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask, render_template
 #from flask_mongoengine import MongoEngine
 from flask_pymongo import PyMongo
