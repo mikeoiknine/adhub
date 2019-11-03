@@ -6,8 +6,7 @@ def init_db(db, app):
     # MongoEngine settings
     app.config['MONGODB_SETTINGS'] = {
         'db' : 'adhub',
-        'port' : 27017,
-        'host' : 'localhost',
+        'host' : 'mongodb://adhub:3e9XApN7AuDgr0llM47rjAo3NpqIbyLomBeiphIrvn1MIGjNEKk1PppFW1iU8hmIr8VsJWKof20AgXWGA4bxqg==@adhub.documents.azure.com:10255/?ssl=true&replicaSet=globaldb',
         'username' : 'adhub_app',
         'password' : '123456789',
         'connect' : True
