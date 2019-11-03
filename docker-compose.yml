@@ -1,0 +1,37 @@
+version: '3'
+services:
+  nginx:
+    build: 
+      context: ./proxy
+      dockerfile: Dockerfile
+    ports: 
+      - 80:80
+    depends_on:
+      - flask
+      - angular
+    restart: always
+    networks: 
+      - adhub_net
+
+  flask:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+    - 5000:5000
+    restart: always
+    networks: 
+      - adhub_net
+
+  angular:
+    build: 
+      context: ./frontend/AdHub
+      dockerfile: Dockerfile
+    ports:
+      - 4200:4200
+    networks: 
+      - adhub_net
+      
+networks: 
+  adhub_net:
+  

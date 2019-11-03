@@ -1,0 +1,3 @@
+# Angular docker ignore
+/node_modules
+/.idea
