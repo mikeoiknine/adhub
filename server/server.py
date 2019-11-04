@@ -1,9 +1,10 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_mongoengine import MongoEngine
+from flask_debugtoolbar import DebugToolbarExtension
 
-import database
+import database, data
 
 def create_app(test_config=None):
     # create and configure the app
@@ -11,10 +12,15 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
+    app.config['DEBUG_TB_PANELS'] = ['flask_mongoengine.panels.MongoDebugPanel']
 
     # Initialize MongoDB Engine with app
     db = MongoEngine()
     database.init_db(db, app)
+    toolbar = DebugToolbarExtension(app)
+
+    # Add User
+    data.init_users()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -32,6 +38,6 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/')
     def hello():
-        return 'index'
+        return render_template('index.html')
 
     return app

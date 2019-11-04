@@ -1,5 +1,5 @@
 from flask_mongoengine.wtf import model_form
-from flask_mongoengine.MongoEngine import .
+from mongoengine import *
 from datetime import date
 
 class AdItemStats(EmbeddedDocument):
@@ -7,10 +7,10 @@ class AdItemStats(EmbeddedDocument):
     week_display_count = StringField(max_length=50)
     day_display_count = StringField(max_length=50)
 
-    def __init__(self, month_display_count, week_display_count, day_display_count):
-        self.month_display_count = month_display_count
-        self.week_display_count = week_display_count
-        self.day_display_count = day_display_count
+    # def __init__(self, month_display_count, week_display_count, day_display_count):
+    #     self.month_display_count = month_display_count
+    #     self.week_display_count = week_display_count
+    #     self.day_display_count = day_display_count
 
     @property
     def serialize(self):
@@ -26,29 +26,29 @@ class AdItemStats(EmbeddedDocument):
         print("# Times Displayed Day", self.day_display_count)
 
 class AdItem(EmbeddedDocument):
-    id = StringField(max_length=50, required=True)
+    ad_id = StringField(max_length=50, required=True)
     name = StringField(max_length=50, required=True)
     user_id = StringField(max_length=50, required=True)
     image_path = StringField(max_length=50, required=True)
     image_64 = StringField(max_length=50, required=True)
     region = StringField(max_length=50)
     stats = EmbeddedDocumentField(AdItemStats)
-    upload_date = EmbeddedDocumentField(date)
+    upload_date = StringField(max_length=50, required=True)
 
-    def __init__(self, id, name, user_id, image_path, image_64, region, stats, upload_date):
-        self.id = id
-        self.name = name
-        self.user_id = user_id
-        self.image_path = image_path
-        self.image_64 = image_64
-        self.region = region
-        self.stats = stats
-        self.upload_date = upload_date
+    # def __init__(self, id, name, user_id, image_path, image_64, region, stats, upload_date):
+    #     self.id = id
+    #     self.name = name
+    #     self.user_id = user_id
+    #     self.image_path = image_path
+    #     self.image_64 = image_64
+    #     self.region = region
+    #     self.stats = stats
+    #     self.upload_date = upload_date
 
     @property
     def serialize(self):
         return {
-            'ID: ' : self.id,
+            'ID: ' : self.ad_id,
             'Name: ' : self.name,
             'User ID: ' : self.user_id,
             'Image Path: ' : self.image_path,
@@ -58,7 +58,7 @@ class AdItem(EmbeddedDocument):
         }            
 
     def __repr__(self):
-        print("ID", self.id)
+        print("ID", self.ad_id)
         print("Name", self.name)
         print("User ID", self.user_id)
         print("Image Path", self.image_path)
@@ -66,51 +66,53 @@ class AdItem(EmbeddedDocument):
         print("Stats", self.stats.__repr__())
 
 class AuthUser(Document):
-    id = StringField(max_length=50, required=True)
+    a_id = StringField(max_length=50, required=True)
     email = StringField(max_length=50, required=True)
-    uer_id = StringField(max_length=50, required=True)
+    user_id = StringField(max_length=50, required=True)
     password = StringField(max_length=50, required=True)
 
-    def __init__(self, id, email, user_id, password):
-        self.id = id
-        self.email = email
-        self.user_id = user_id
-        self.password = password
+    meta = {'allow_inheritance': True}
+
+    # def __init__(self, id, email, user_id, password):
+    #     self.id = id
+    #     self.email = email
+    #     self.user_id = user_id
+    #     self.password = password
 
     @property
     def serialize(self):
         return {
-            'id' : self.id,
+            'id' : self.a_id,
             'email' : self.email,
             'user id' : self.user_id,
             'password' : self.password
         }
 
     def __repr__(self):
-        print("ID: ", self.id)
+        print("ID: ", self.a_id)
         print("Email: ", self.email)
         print("User ID: ", self.user_id)
         print("Password: ", self.password)
 
-class User(Document, AuthUser):
+class User(AuthUser):
     first_name = StringField(max_length=50)
     last_name = StringField(max_length=50)
     company = StringField(max_length=50, required=True)
     address = StringField(max_length=50, required=True)
     ad_items = ListField(EmbeddedDocumentField(AdItem))
 
-    def __init__(self, id, email, user_id, password, first_name=None, last_name=None, company, address, ad_items=None):
-        super(AuthUser, self).__init__(id, email, user_id, password)
-        self.first_name = first_name
-        self.last_name = last_name
-        self.company = company
-        self.address = address
-        self.ad_items = ad_items
+    # def __init__(self, id, email, user_id, password, company, address, first_name=None, last_name=None, ad_items=None):
+    #     super(AuthUser, self).__init__(id, email, user_id, password)
+    #     self.first_name = first_name
+    #     self.last_name = last_name
+    #     self.company = company
+    #     self.address = address
+    #     self.ad_items = ad_items
         
     @property
     def serialize(self):
         return {
-            'id' : self.id,
+            'id' : self.a_id,
             'email' : self.email,
             'user id' : self.user_id,
             'password' : self.password,
