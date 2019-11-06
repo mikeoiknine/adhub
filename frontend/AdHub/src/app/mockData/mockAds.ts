@@ -20,7 +20,7 @@ const mockAds = [
     id: '2',
     image_64: image_base_64,
     imagePath: 'some/path/in/s3/img2.png',
-    name: 'Selling drugs',
+    name: '2 for 1',
     stats: {
       numberOfTimeSeeDay: 5,
       numberOfTimeSeeMonth: 15,
