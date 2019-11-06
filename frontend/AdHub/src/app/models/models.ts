@@ -18,4 +18,7 @@ export interface User {
   name: String;
   id: String;
   email: String;
+  company: String;
+  address: String;
+  adItems: AdItem[];
 }
