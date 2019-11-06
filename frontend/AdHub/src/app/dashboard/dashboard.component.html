@@ -1,4 +1,5 @@
-<div class="body">
+<app-ad-player *ngIf="viewerEnable" [image_base_64]="viewingImage"></app-ad-player>
+<div class="body" *ngIf="!viewerEnable">
   <mat-toolbar>
     <span>Adhub</span>
   </mat-toolbar>
@@ -45,7 +46,7 @@
     </mat-accordion>
 
     <span class="button-container-footer">
-    <button mat-fab>View</button>
+    <button mat-fab (click)="openImageViewer()">View</button>
     <button mat-fab (click)="openAdUploadDialog()" >Upload</button>
   </span>
   </div>
