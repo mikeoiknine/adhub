@@ -55,7 +55,7 @@ class AdItem(EmbeddedDocument):
             'Image 64: ' : self.image_64,
             'Region: ' : self.region,
             'Stats: ' : self.stats.serialize()
-        }            
+        }
 
     def __repr__(self):
         print("ID", self.ad_id)
@@ -108,7 +108,7 @@ class User(AuthUser):
     #     self.company = company
     #     self.address = address
     #     self.ad_items = ad_items
-        
+
     @property
     def serialize(self):
         return {
@@ -129,3 +129,7 @@ class User(AuthUser):
         print("Company: ", self.company)
         print("Address: ", self.address)
 
+# Test User for login/register -- DELETE
+class BasicUser(Document):
+    username = StringField(max_length=50)
+    password = StringField(max_length=50)
