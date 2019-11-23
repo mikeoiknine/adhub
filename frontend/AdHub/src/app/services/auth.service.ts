@@ -28,8 +28,9 @@ export class AuthService {
     this.http.post(host + this.PATH + this.LOGIN_PATH, params).subscribe(value => {
       this.saveState(value['id']);
       this.router.navigate(['/dashboard']);
+      console.log('yay');
     },error => {
-      // print error
+      console.log('nope');
     });
   }
 
