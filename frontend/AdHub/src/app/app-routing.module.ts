@@ -7,9 +7,18 @@ import {RegisterComponent} from './register/register.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 
 const routes: Routes = [
-  {path: 'register', component: RegisterComponent, canActivate: [LoggedInGuard]},
-  {path: 'login', component: LoginComponent, canActivate: [LoggedInGuard]},
-  {path: 'dashboard', component: DashboardComponent},
+  {path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full'},
+  {path: 'register',
+    component: RegisterComponent,
+    canActivate: [LoggedInGuard]},
+  {path: 'login',
+    component: LoginComponent,
+    canActivate: [LoggedInGuard]},
+  {path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [LoggedInGuard]},
 ];
 
 @NgModule({
