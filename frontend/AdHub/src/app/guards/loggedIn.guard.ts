@@ -21,11 +21,10 @@ export class LoggedInGuard implements CanActivate {
 
     /* if the mockUser is already logged in, redirecting to the home page */
     if (userLoggedIn) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/']);
     }
 
     /* return true, can activate the route since it is needed to log in */
     return !userLoggedIn;
-    return false;
   }
 }

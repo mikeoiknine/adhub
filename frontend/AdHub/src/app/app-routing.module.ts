@@ -18,7 +18,7 @@ const routes: Routes = [
     canActivate: [LoggedInGuard]},
   {path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [LoggedInGuard]},
+    canActivate: [AuthGuard]},
 ];
 
 @NgModule({
