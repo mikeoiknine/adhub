@@ -6,6 +6,7 @@ import {MatDialog} from '@angular/material';
 import {AdUploaderComponent} from '../ad-uploader/ad-uploader.component';
 import {image_base_64} from '../mockData/mockAds';
 import {animate, style, transition, trigger} from '@angular/animations';
+import {AddViewerDialogComponent} from '../add-viewer-dialog/add-viewer-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -64,8 +65,19 @@ export class DashboardComponent implements OnInit {
   }
 
   openImageViewer() {
-    this.viewerEnable = true;
-    this.viewingImage = image_base_64;
+
+    const dialogRef = this.dialog.open(AddViewerDialogComponent, {
+      width: '45%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result) {
+        this.viewerEnable = true;
+        this.viewingImage = image_base_64;
+      }
+    });
+
   }
 
   async delay(ms: number) {

@@ -52,7 +52,6 @@ export class AdUploaderComponent implements OnInit {
     }else{
       this.dialogRef.close(null);
     }
-
   }
 
   deleteAttachment() {

@@ -1,0 +1,17 @@
+<p class="view-ad-title">Filter ads</p>
+<div class="view-form">
+
+  <mat-form-field>
+    <mat-label>Types to exclude</mat-label>
+    <mat-select placeholder="Toppings" [formControl]="excludedTypeController" multiple>
+      <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+
+<span class="button-holder">
+  <button mat-flat-button color="primary" (click)="closeDialog(false)">Cancel</button>
+  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="excludedTypeController.invalid">Save</button>
+</span>
+
