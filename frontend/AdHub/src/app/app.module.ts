@@ -7,6 +7,7 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {AdPlayerComponent} from './ad-player/ad-player.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AdUploaderComponent} from './ad-uploader/ad-uploader.component';
+import { HttpClientModule } from '@angular/common/http';
 import {
   MatCardModule,
   MatFormFieldModule,
@@ -23,6 +24,7 @@ import {
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RegisterComponent} from './register/register.component';
+import { AddViewerDialogComponent } from './add-viewer-dialog/add-viewer-dialog.component';
 
 
 @NgModule({
@@ -32,7 +34,8 @@ import {RegisterComponent} from './register/register.component';
     DashboardComponent,
     AdPlayerComponent,
     AdUploaderComponent,
-    RegisterComponent
+    RegisterComponent,
+    AddViewerDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -50,12 +53,13 @@ import {RegisterComponent} from './register/register.component';
     MatDividerModule,
     MatSelectModule,
     MatDialogModule,
-    MatSnackBarModule,
+    HttpClientModule
     MatSlideToggleModule
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [AdUploaderComponent]
+  entryComponents: [AdUploaderComponent,AddViewerDialogComponent]
 })
 export class AppModule {
 }
