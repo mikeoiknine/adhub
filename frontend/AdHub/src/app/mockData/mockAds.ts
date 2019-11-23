@@ -14,7 +14,8 @@ const mockAds = [
       numberOfTimeSeeWeek: 15
     } as AdItemStats,
     uploadedDate: new Date(2019,10,12),
-    userId: '1234567890'
+    userId: '1234567890',
+    active: true
   },
   {
     id: '2',
@@ -27,7 +28,8 @@ const mockAds = [
       numberOfTimeSeeWeek: 6
     } as AdItemStats,
     uploadedDate: new Date(2019,10,27),
-    userId: '1234567890'
+    userId: '1234567890',
+    active: false
   }
 ] as AdItem[];
 
