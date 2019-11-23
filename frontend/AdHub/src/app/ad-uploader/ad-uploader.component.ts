@@ -11,18 +11,21 @@ import {connectableObservableDescriptor} from 'rxjs/internal/observable/Connecta
 })
 export class AdUploaderComponent implements OnInit {
 
-  private types = ['Food','Car','Furniture','Fitness'];
+  private types = ['Food', 'Car Dealership', 'Furniture', 'Fitness'];
+  private locations = ['Downtown, Montreal', 'Old Montreal, Montreal', 'Plateau Mont-Royal, Montreal', 'Cotes-des-Neige, Montreal', 'West Island, Montreal', 'Verdun, Montreal', 'Westmount, Montreal', 'Outremont, Montreal', 'South West, Montreal', 'Hochelaga-Maisonneuve, Montreal'];
   private base64File = null;
   private file :File = null;
   private uploadForm = new FormGroup({
       nameController: new FormControl('', [Validators.required]),
-      typeController: new FormControl('', [Validators.required])
+      typeController: new FormControl('', [Validators.required]),
+      locationController: new FormControl('', [Validators.required])
     }
   )
 
   constructor(private fileService: FileService, public dialogRef: MatDialogRef<AdUploaderComponent>) { }
 
   ngOnInit() {
+    //stop
   }
 
   uploadFile(event) {
@@ -47,7 +50,8 @@ export class AdUploaderComponent implements OnInit {
       this.dialogRef.close({
         name: this.uploadForm.controls['nameController'].value,
         base64: this.base64File,
-        type: this.uploadForm.controls['typeController'].value
+        type: this.uploadForm.controls['typeController'].value,
+        location: this.uploadForm.controls['locationController'].value
       });
     }else{
       this.dialogRef.close(null);

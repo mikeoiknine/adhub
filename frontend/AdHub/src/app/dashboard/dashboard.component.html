@@ -10,9 +10,8 @@
 
     <mat-divider></mat-divider>
 
-
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let ad of ads">
+      <mat-expansion-panel *ngFor="let ad of activeAds">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ad.name}}
@@ -21,35 +20,96 @@
             {{ad.uploadedDate | date:'medium' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <div class="outer-pannel-description">
+          <div class="expansion-description">
+            <span>
+              Ad Info
+              <ul class="ad-info">
+                <li>Id: {{ad.name}}</li>
+                <li>Name: {{ad.id}}</li>
+                <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
+                <li>Display Locations : {{ad.location}}</li>
+              </ul>
+            </span>
+            <span>
+              Ad Stats
+              <ul class="ad-info">
+                <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
+                <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
+                <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
 
-        <div class="expansion-description">
-          <span>
-            Ad Info
-          <ul class="ad-info">
-            <li>Id: {{ad.name}}</li>
-            <li>Name: {{ad.id}}</li>
-            <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
-          </ul>
+              </ul>
             </span>
-          <span>
-            Ad Stats
-          <ul class="ad-info">
-            <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
-            <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
-            <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
-          </ul>
+            <span>
+              <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
             </span>
-            <img class="ad-image" src="{{ad.image_64}}" width="20%">
+
+          </div>
+
+          <img class="ad-image" src="{{ad.image_64}}" width="20%">
+
         </div>
 
       </mat-expansion-panel>
     </mat-accordion>
 
     <span class="button-container-footer">
+      <button mat-fab (click)="openImageViewer()">View</button>
+      <button mat-fab (click)="openAdUploadDialog()">Upload</button>
+    </span>
+
+
+
+    <p class="title-ads">Inactive Ads</p>
+
+    <mat-divider></mat-divider>
+
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let ad of inactiveAds">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ad.name}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ad.uploadedDate | date:'medium' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+      <div class="outer-pannel-description">
+        <div class="expansion-description">
+          <span>
+            Ad Info
+            <ul class="ad-info">
+              <li>Id: {{ad.name}}</li>
+              <li>Name: {{ad.id}}</li>
+              <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
+              <li>Display Locations : {{ad.location}}</li>
+            </ul>
+          </span>
+          <span>
+            Ad Stats
+            <ul class="ad-info">
+              <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
+              <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
+              <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
+            </ul>
+          </span>
+          <span>
+            <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
+          </span>
+    
+        </div>
+      <img class="ad-image" src="{{ad.image_64}}" width="20%">
+
+      </div>
+
+  </mat-expansion-panel>
+  </mat-accordion>
+
+  <span class="button-container-footer">
     <button mat-fab (click)="openImageViewer()">View</button>
-    <button mat-fab (click)="openAdUploadDialog()" >Upload</button>
+    <button mat-fab (click)="openAdUploadDialog()">Upload</button>
   </span>
-  </div>
+</div>
 </div>
 
 

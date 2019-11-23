@@ -25,7 +25,8 @@ import {animate, style, transition, trigger} from '@angular/animations';
 })
 export class DashboardComponent implements OnInit {
 
-  private ads: AdItem[];
+  private activeAds: AdItem[] = [];
+  private inactiveAds: AdItem[] = [];
   private user: User;
   private viewerEnable = false;
   private viewingImage: String = null;
@@ -34,7 +35,13 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ads = this.adService.getAdvertisement();
+    this.adService.getAdvertisement().forEach(ad => {
+      if (ad.active) {
+        this.activeAds.push(ad);
+      } else {
+        this.inactiveAds.push(ad);
+      }
+    });
     this.user = this.authService.getMe();
   }
 
@@ -46,7 +53,7 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-        this.ads.push({
+        this.activeAds.push({
           id: '1',
           stats: {
             numberOfTimeSeeMonth: 0,
@@ -54,6 +61,7 @@ export class DashboardComponent implements OnInit {
             numberOfTimeSeeDay: 0
           },
           uploadedDate: new Date(),
+          active: true,
           name: result['name'],
           userId: this.user.id,
           imagePath: 'some path',
@@ -66,6 +74,29 @@ export class DashboardComponent implements OnInit {
   openImageViewer() {
     this.viewerEnable = true;
     this.viewingImage = image_base_64;
+  }
+
+  changeActiveState(item: AdItem, state: boolean) {
+
+    if (state === false) {
+      let ad = this.activeAds.find((ad) => ad === item)
+      ad.active = state;
+      this.inactiveAds.push(ad);
+
+      var index = this.activeAds.indexOf(ad);
+      this.activeAds.splice(index, 1);
+
+    } else {
+
+      let ad = this.inactiveAds.find((ad) => ad === item)
+      ad.active = state;
+      this.activeAds.push(ad);
+
+      var index = this.inactiveAds.indexOf(ad);
+      this.inactiveAds.splice(index, 1);
+
+    }
+  
   }
 
   async delay(ms: number) {

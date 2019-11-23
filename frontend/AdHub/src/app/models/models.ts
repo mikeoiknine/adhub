@@ -6,6 +6,7 @@ export interface AdItem {
   image_64: String;
   stats: AdItemStats;
   uploadedDate: Date;
+  active: Boolean;
 }
 
 export interface AdItemStats {
@@ -22,3 +23,5 @@ export interface User {
   address: String;
   adItems: AdItem[];
 }
+
+export const LOCATIONS = ['Downtown, Montreal', 'Old Montreal, Montreal', 'Plateau Mont-Royal, Montreal', 'Cotes-des-Neige, Montreal', 'West Island, Montreal', 'Verdun, Montreal', 'Westmount, Montreal', 'Outremont, Montreal', 'South West, Montreal', 'Hochelaga-Maisonneuve, Montreal'];
