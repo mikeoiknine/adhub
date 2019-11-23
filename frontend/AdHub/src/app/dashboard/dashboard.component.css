@@ -2,22 +2,37 @@
   color: #FFFFFF;
   font-size: 1.5em;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  margin-top: 0px !important;
+  margin-top: 10px !important;
 }
 
 .ad-image{
   display: block;
-  max-width:10%;
+  max-width:20%;
   width: auto;
   height: auto;
 }
 
-.expansion-description{
+.outer-pannel-description {
   width: 100%;
   display: flex;
   justify-content: space-between;
   margin: 1em 0 0 0;
 }
+
+
+.expansion-description {
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+  margin: 1em 0 0 0;
+}
+
+mat-expansion-panel-header-description {
+  justify-content: space-between;
+  word-spacing: 10px;
+  align-items: center;
+}
+
 
 .ad-info{
   list-style: none;

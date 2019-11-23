@@ -2,24 +2,34 @@
 <form [formGroup]="uploadForm" class="upload-form">
 
 
-    <mat-form-field class="field-holder" appearance="outline">
-      <mat-label>Name</mat-label>
-      <input matInput placeholder="Ad name" formControlName="nameController">
-    </mat-form-field>
+  <mat-form-field class="field-holder" appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="Ad name" formControlName="nameController">
+  </mat-form-field>
 
-    <mat-form-field class="field-holder">
-      <mat-label>Favorite food</mat-label>
-      <mat-select formControlName="typeController">
-        <mat-option *ngFor="let type of types" [value]="type">
-          {{type}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field class="field-holder">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="typeController">
+      <mat-option *ngFor="let type of types" [value]="type">
+        {{type}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="field-holder">
+    <mat-label>Location</mat-label>
+    <mat-select formControlName="locationController" multiple>
+      <mat-option *ngFor="let location of locations" [value]="location">
+        {{location}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
 
   <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="uploadFile($event)">
     <input hidden type="file" #fileInput (change)="uploadFile($event.target.files)">
   </div>
+
 
   <div *ngIf="file" class="files-list">
     <p class="file-name"> {{ file.name }} </p>

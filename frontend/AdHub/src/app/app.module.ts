@@ -19,7 +19,8 @@ import {
   MatDividerModule,
   MatSelectModule,
   MatDialogModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatSlideToggleModule 
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RegisterComponent} from './register/register.component';
@@ -52,8 +53,9 @@ import { AddViewerDialogComponent } from './add-viewer-dialog/add-viewer-dialog.
     MatDividerModule,
     MatSelectModule,
     MatDialogModule,
-    MatSnackBarModule,
     HttpClientModule
+    MatSlideToggleModule
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
