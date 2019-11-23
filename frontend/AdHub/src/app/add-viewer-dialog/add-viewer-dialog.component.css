@@ -1,0 +1,18 @@
+.view-form{
+  display: flex;
+  flex-direction: column;
+}
+
+.view-ad-title{
+  color: #FFFFFF;
+  font-size: 1.5em;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.button-holder{
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+

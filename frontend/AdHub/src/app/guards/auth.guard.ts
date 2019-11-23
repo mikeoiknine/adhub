@@ -17,14 +17,13 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
     /* Check if mockUser is already logged in */
-    // const userLoggedIn = this.authService.isUserAuthenticated();
-    //
-    // /* If not, then cannot access route and will be redirected to the login page */
-    // if (!userLoggedIn) {
-    //   this.router.navigate(['/login']);
-    // }
-    //
-    // return userLoggedIn;
-    return false;
+    const userLoggedIn = this.authService.isUserAuthenticated();
+
+    /* If not, then cannot access route and will be redirected to the login page */
+    if (!userLoggedIn) {
+      this.router.navigate(['/login']);
+    }
+
+    return userLoggedIn;
   }
 }
