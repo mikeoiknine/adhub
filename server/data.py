@@ -8,6 +8,7 @@ import helper
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
+<<<<<<< HEAD
 @bp.route('/me', methods=['GET'])
 def get_user_info():
     if method.request != 'GET':
@@ -125,10 +126,47 @@ def remove_ad_item():
 
     # Remove this ad from the users ad list
     mongo.db.users.update( {'_id': ObjectId(content['user_id']) }, {"$pull": {"ads": content['ad_id']} } )
+=======
+@bp.route('/aditem', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def ad_item_controller():
+    content = request.json
+
+    if request.method == 'POST':
+        # Save image in Azure Blob for this user
+        ad_id = uuid.uuid1()
+        image_path = helper.decode_image(ad_id, content['image_64'])
+
+        # Add advertisement item
+        ads = mongo.db.advertisements
+        ad_id = ads.insert({
+                'ad_id': str(ad_id),
+                'user_id': content['user_id'],
+                'name': content['name'],
+                'image_path': image_path,
+                'image_64': content['image_64'],
+                'region': content['region'],
+                'upload_date': content['upload_date'],
+                'category': content['category'],
+                'stats': {
+                    'day_view_count': 0,
+                    'month_view_count': 0,
+                    'year_view_count': 0,
+                    'total_view_count': 0
+                    }
+                })
+
+        # Add this ad to the user
+        mongo.db.users.update(
+            { '_id': ObjectId(content['user_id']) },
+            { '$addToSet': { 'ads': str(ad_id) } },
+            upsert=True
+        )
+>>>>>>> Crude attempt at returning new ads
 
     return jsonify({'msg': 'Success!'})
 
 @bp.route('/config', methods=['POST'])
+<<<<<<< HEAD
 def set_user_config():
     """
     Sets the user config which describes the types of ads this user is interested in
@@ -162,6 +200,25 @@ def get_ad_stats():
     Expected Fields:
     ad_id: Id of the adverstisement of interest
     """
+=======
+@login_required
+def set_user_config():
+    if request.method != 'POST':
+        return None
+
+    content = request.json
+
+
+    # Set config on what kind of ads this user wants
+    # Save it into the db (either in user table or new table)
+    # Expected fields:
+    # user_id
+    # Region: Where should the ads be from
+    # category: What kind of ads should be shown
+
+@bp.route('/adstat', methods=['GET'])
+def get_ad_stats():
+>>>>>>> Crude attempt at returning new ads
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
@@ -192,6 +249,7 @@ def get_next_ad():
     if request.method != 'POST':
         return jsonify({'msg': 'Invalid request type'})
 
+<<<<<<< HEAD
     content = request.json
     user_config = mongo.db.users_config.find_one({'_id': ObjectId(content['user_id'])})
     print("User Config is:", user_config)

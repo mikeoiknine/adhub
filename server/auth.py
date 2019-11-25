@@ -27,7 +27,6 @@ def register():
     if 'location' not in content or content['location'] == "":
         return jsonify({"msg": "Invalid Request - Missing location field"})
 
-
     users = mongo.db.users
     existing_user = users.find_one({"username" : content["username"]})
 
