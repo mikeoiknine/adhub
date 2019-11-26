@@ -62,11 +62,11 @@ export class AuthService {
   }
 
   saveState(userId){
-    localStorage.setItem('userId', userId);
+    localStorage.setItem('adhub_userId', userId);
   }
 
   getState(){
-    return localStorage.getItem('userId');
+    return localStorage.getItem('adhub_userId');
   }
 
 }

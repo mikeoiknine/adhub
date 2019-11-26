@@ -4,6 +4,8 @@ import {
   RouterStateSnapshot,
   Router
 } from '@angular/router';
+
+import { environment} from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../services/auth.service';
@@ -24,6 +26,10 @@ export class AuthGuard implements CanActivate {
       this.router.navigate(['/login']);
     }
 
-    return userLoggedIn;
+    if(environment.debug_login){
+      return false;
+    }else {
+      return userLoggedIn;
+    }
   }
 }
