@@ -17,7 +17,7 @@
     <mat-divider></mat-divider>
 
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let ad of activeAds">
+      <mat-expansion-panel *ngFor="let ad of allAds | isActiveAd">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ad.name}}
@@ -47,7 +47,12 @@
               </ul>
             </span>
             <span>
-              <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
+              Actions
+              <ul class="ad-info">
+              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                    </button> Delete </li>
+              </ul>
             </span>
 
           </div>
@@ -70,7 +75,7 @@
     <mat-divider></mat-divider>
 
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let ad of inactiveAds">
+      <mat-expansion-panel *ngFor="let ad of allAds | isActiveAd: 'inactive'">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ad.name}}
@@ -99,8 +104,13 @@
             </ul>
           </span>
             <span>
-            <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
-          </span>
+              Actions
+              <ul class="ad-info">
+              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                    </button> Delete </li>
+              </ul>
+            </span>
 
           </div>
           <img class="ad-image" src="{{ad.image_64}}" width="20%">
