@@ -25,6 +25,7 @@ import {
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RegisterComponent} from './register/register.component';
 import { AddViewerDialogComponent } from './add-viewer-dialog/add-viewer-dialog.component';
+import {ActivePipe} from './pipes/active.pipe';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { AddViewerDialogComponent } from './add-viewer-dialog/add-viewer-dialog.
     AdPlayerComponent,
     AdUploaderComponent,
     RegisterComponent,
-    AddViewerDialogComponent
+    AddViewerDialogComponent,
+    ActivePipe
   ],
   imports: [
     BrowserModule,
