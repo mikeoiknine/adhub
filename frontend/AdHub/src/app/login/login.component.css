@@ -27,6 +27,20 @@
   align-self: center;
 }
 
+#logo{
+  display: block;
+  max-width:150px;
+  width: auto;
+  height: auto;
+  margin-bottom: 5px;
+}
+
+.logo-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .adhub-name {
   color: rgb(192, 112, 24);
   text-align: center;

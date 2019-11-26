@@ -91,24 +91,27 @@ export class DashboardComponent implements OnInit {
   changeActiveState(item: AdItem, state: boolean) {
 
     if (state === false) {
-      let ad = this.activeAds.find((ad) => ad === item)
-      ad.active = state;
-      this.inactiveAds.push(ad);
+      const inactiveAd = this.activeAds.find((ad) => ad === item);
+      inactiveAd.active = state;
+      this.inactiveAds.push(inactiveAd);
 
-      var index = this.activeAds.indexOf(ad);
+      const index = this.activeAds.indexOf(inactiveAd);
       this.activeAds.splice(index, 1);
 
     } else {
 
-      let ad = this.inactiveAds.find((ad) => ad === item)
-      ad.active = state;
-      this.activeAds.push(ad);
+      const activeAd = this.inactiveAds.find((ad) => ad === item);
+      activeAd.active = state;
+      this.activeAds.push(activeAd);
 
-      var index = this.inactiveAds.indexOf(ad);
+      const index = this.inactiveAds.indexOf(activeAd);
       this.inactiveAds.splice(index, 1);
 
     }
-  
+  }
+
+  logout(){
+    this.authService.logout();
   }
 
   async delay(ms: number) {
