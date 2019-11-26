@@ -54,20 +54,22 @@ def ad_item_controller():
     return jsonify({'msg': 'Success!'})
 
 @bp.route('/config', methods=['POST'])
-@login_required
+#@login_required
 def set_user_config():
     if request.method != 'POST':
         return None
 
     content = request.json
 
+    config_file = {}
+    if 'region' in content:
+        config_file['region'] = content['region']
 
-    # Set config on what kind of ads this user wants
-    # Save it into the db (either in user table or new table)
-    # Expected fields:
-    # user_id
-    # Region: Where should the ads be from
-    # category: What kind of ads should be shown
+    if 'category' in content:
+        config_file['category'] = content['category']
+
+    mongo.db.users_config.update({ '_id': ObjectId(content['user_id']) }, config_file, upsert=True)
+    return jsonify({'msg': 'Success!'})
 
 @bp.route('/adstat', methods=['GET'])
 def get_ad_stats():
@@ -82,7 +84,7 @@ def get_ad_stats():
     if ad is None:
         return jsonify({'msg': 'No such ad ID'})
 
-    return jsonify('msg': 'Success!', ad['stats'])
+    return jsonify({'msg': 'Success!', 'stats': ad['stats']})
 
 @bp.route('/next', methods=['POST'])
 def get_next_ad():
@@ -103,29 +105,45 @@ def get_next_ad():
 
 
     content = request.json
-    user_config = mongo.db.users.find_one({'_id': ObjectId(content['user_id'])})
+    user_config = mongo.db.users_config.find_one({'_id': ObjectId(content['user_id'])})
+    print("User Config is:", user_config)
+    print("Requested filters:", content)
     adverts = mongo.db.advertisements
-    if user_config['category'] is not None and user_config['region'] is None:
-        ads = adverts.find( { category :  user_config['category']  }, {name: 1, category: 1, stats: 1}).sort( {total_view_count: -1} )
-    elif user_config['region'] is not None and user_config['category'] is None:
-        ads = adverts.find( { region: user_config['region']  }, {name: 1, category: 1, stats: 1}).sort( {total_view_count: -1} )
-    else
-        ads = adverts.find( { }, {name: 1, category: 1, stats: 1}).sort( {total_view_count: -1} )
 
-    if len(ads) == 0:
+    filter_by = {}
+    if 'category' in user_config and user_config['category'] is not "":
+        filter_by['category'] = user_config['category']
+
+    if 'region' in user_config and user_config['region'] is not "":
+        filter_by['region'] = user_config['region']
+
+    print("Filters applied:", filter_by)
+    ads = adverts.find(filter_by).sort([('total_view_count', -1)])
+
+    if ads.count() == 0:
         return jsonify({'msg': 'No image matching query'})
-    if len(ads) == 1:
-        # Todo: Update total view count for this ad
-        return jsonify({'msg': 'Success!',
-            'ad_id': ads['_id'],
-            'image_64': ads['image_64']
-            })
+
+    if ads.count() == 1:
+        mongo.db.advertisements.update(
+            { '_id': ObjectId(ads[0]['_id']) },
+            { '$inc': { 'stats.total_view_count': 1} } ,
+            upsert=True
+        )
+        print("returning ad:", ad['_id'])
+        return jsonify({ 'msg': 'Success!', 'ad_id': str(ads[0]['_id']), 'image_64': ads[0]['image_64']})
+
 
     for ad in ads:
-        if ad['_id'] != content['last_ad_id']:
-            # Todo: Update total view count for this ad
+        if str(ad['_id']) != content['last_ad_id']:
+            mongo.db.advertisements.update(
+                { '_id': ObjectId(ad['_id']) },
+                { '$inc': { 'stats.total_view_count': 1} } ,
+                upsert=True
+            )
+
+            print("returning ad:", ad['_id'])
             return jsonify({'msg': 'Success!',
-                'ad_id': ad['_id'],
+                'ad_id': str(ad['_id']),
                 'image_64': ad['image_64']
                 })
 
