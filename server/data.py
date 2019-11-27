@@ -66,41 +66,6 @@ def add_item():
         return jsonify({'msg': 'Invalid request type'})
 
     content = request.json
-    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
-
-    print("User ads:", users_ads)
-
-    data = {}
-    ads = mongo.db.advertisements
-    for ad_id in users_ads['ads']:
-        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
-        if ad_item is not None:
-            print("Appending:", ad_item['name'])
-            data[ad_id] = ad_item
-        else:
-            print("Ad with id:", ad_id, "is None")
-
-    return jsonify({'msg': 'Success!', 'ads': data})
-
-
-
-@bp.route('/add', methods=['POST'])
-def add_item():
-    """
-    Allows user to add new ad to the system
-
-    Expected Fields:
-    user_id: ID of the user adding this ad item
-    name: Name of the ad image
-    image_64: Base64 encoded string of the image
-    region: Region that the ad is being uploaded from
-    upload_date: Current date
-    category: Type of ad being uploaded
-    """
-    if request.method != 'POST':
-        return jsonify({'msg': 'Invalid request type'})
-
-    content = request.json
 
     # Save image in Azure Blob for this user
     ad_id = uuid.uuid1()
