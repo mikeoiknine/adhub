@@ -3,10 +3,10 @@ import sys
 import functools
 
 from flask import (
-        Blueprint, request, jsonify, g, session
-)
+    Blueprint, request, jsonify, g, session,
+    make_response)
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import mongo
+from .db import mongo
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 

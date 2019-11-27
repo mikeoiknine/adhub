@@ -1,1 +1,5 @@
 flask
+azure
+Flask-Cors
+Flask-PyMongo
+Flask-DebugToolbar

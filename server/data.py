@@ -3,9 +3,8 @@ from bson.objectid import ObjectId
 from flask import (
         Blueprint, request, jsonify, g, session
 )
-from db import mongo
-from .auth import login_required
-import helper
+from .db import mongo
+from . import helper
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
@@ -128,10 +127,10 @@ def get_next_ad():
     adverts = mongo.db.advertisements
 
     filter_by = {}
-    if 'category' in user_config and user_config['category'] is not "":
+    if 'category' in user_config and user_config['category'] != "":
         filter_by['category'] = user_config['category']
 
-    if 'region' in user_config and user_config['region'] is not "":
+    if 'region' in user_config and user_config['region'] != "":
         filter_by['region'] = user_config['region']
 
     print("Filters applied:", filter_by)
@@ -146,7 +145,7 @@ def get_next_ad():
             { '$inc': { 'stats.total_view_count': 1} } ,
             upsert=True
         )
-        print("returning ad:", ad['_id'])
+        print("returning ad:", ads['_id'])
         return jsonify({ 'msg': 'Success!', 'ad_id': str(ads[0]['_id']), 'image_64': ads[0]['image_64']})
 
     for ad in ads:

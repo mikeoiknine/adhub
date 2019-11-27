@@ -1,19 +1,9 @@
 import os
 
 from flask import Flask, render_template
-<<<<<<< HEAD
-from flask_mongoengine import MongoEngine
-from flask_debugtoolbar import DebugToolbarExtension
-
-import database, data
-=======
-#from flask_mongoengine import MongoEngine
 from flask_pymongo import PyMongo
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
-
-#db = MongoEngine()
->>>>>>> 3fd9b72... Crude attempt at returning new ads
 
 def create_app(test_config=None):
     # create and configure the app
@@ -22,25 +12,6 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
     app.config['DEBUG_TB_PANELS'] = ['flask_mongoengine.panels.MongoDebugPanel']
-
-<<<<<<< HEAD
-    # Initialize MongoDB Engine with app
-    app.config['MONGODB_SETTINGS'] = {
-            "db": "testdb",
-            "host": "localhost",
-            "port": 27017,
-            "alias": "default"
-    }
-    #database.init_db(db, app)
-    db = MongoEngine()
-    db.init_app(app, config={
-        'db': 'testdb',
-        'host': 'localhost',
-        'port': 27017,
-        'alias': 'default'
-    })
-    toolbar = DebugToolbarExtension(app)
-=======
     app.config["MONGO_URI"] = "mongodb://localhost:27017/test"
     #app.config["MONGO_URI"] = {
     #        "db": "testdb",
@@ -49,7 +20,7 @@ def create_app(test_config=None):
     #        "alias": "default"
     #}
     #global mongo
-    from db import mongo
+    from .db import mongo
     mongo.init_app(app)
 
     CORS(app)
@@ -68,7 +39,6 @@ def create_app(test_config=None):
     #    'alias': 'default'
     #})
     #toolbar = DebugToolbarExtension(app)
->>>>>>> 3fd9b72... Crude attempt at returning new ads
 
     # Add User
     #data.init_users()
@@ -89,15 +59,12 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/')
     def hello():
-        return render_template('index.html')
+        return "Hello World!"
 
     from . import auth
     app.register_blueprint(auth.bp)
 
-<<<<<<< HEAD
-=======
     from . import data
     app.register_blueprint(data.bp)
 
->>>>>>> 3fd9b72... Crude attempt at returning new ads
     return app
