@@ -30,8 +30,27 @@ def get_user_ads():
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
-@bp.route('/aditem', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def ad_item_controller():
+    content = request.json
+    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+
+    print("User ads:", users_ads)
+
+    data = {}
+    ads = mongo.db.advertisements
+    for ad_id in users_ads['ads']:
+        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
+        if ad_item is not None:
+            print("Appending:", ad_item['name'])
+            data[ad_id] = ad_item
+        else:
+            print("Ad with id:", ad_id, "is None")
+
+    return jsonify({'msg': 'Success!', 'ads': data})
+
+
+
+@bp.route('/add', methods=['POST'])
+def add_item():
     """
     Allows user to add new ad to the system
 
@@ -43,6 +62,9 @@ def ad_item_controller():
     upload_date: Current date
     category: Type of ad being uploaded
     """
+    if request.method != 'POST':
+        return jsonify({'msg': 'Invalid request type'})
+
     content = request.json
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
 
