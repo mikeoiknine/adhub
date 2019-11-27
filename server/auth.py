@@ -36,7 +36,10 @@ def register():
             'password': generate_password_hash(content['password']),
             'name': content['name'],
             'businessName': content['businessName'],
-            'location': content['location']
+            'location': content['location'],
+            'stats': {
+                'total_ads_displayed': 0
+                }
         })
         print(user_id, file=sys.stderr)
         return jsonify({'id': str(user_id)})
