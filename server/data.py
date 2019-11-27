@@ -30,6 +30,19 @@ def get_user_ads():
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
+@bp.route('/aditem', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def ad_item_controller():
+    """
+    Allows user to add new ad to the system
+
+    Expected Fields:
+    user_id: ID of the user adding this ad item
+    name: Name of the ad image
+    image_64: Base64 encoded string of the image
+    region: Region that the ad is being uploaded from
+    upload_date: Current date
+    category: Type of ad being uploaded
+    """
     content = request.json
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
 
