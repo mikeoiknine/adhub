@@ -20,6 +20,13 @@ def register():
         return jsonify({"msg": "Invalid Request - Missing username field"})
     if 'password' not in content or content['password'] == "":
         return jsonify({"msg": "Invalid Request - Missing password field"})
+    if 'name' not in content or content['name'] == "":
+        return jsonify({"msg": "Invalid Request - Missing name field"})
+    if 'businessName' not in content or content['businessName'] == "":
+        return jsonify({"msg": "Invalid Request - Missing businessName field"})
+    if 'location' not in content or content['location'] == "":
+        return jsonify({"msg": "Invalid Request - Missing location field"})
+
 
     users = mongo.db.users
     existing_user = users.find_one({"username" : content["username"]})
@@ -27,7 +34,10 @@ def register():
     if existing_user is None:
         user_id = users.insert({
             'username': content['username'],
-            'password': generate_password_hash(content['password'])
+            'password': generate_password_hash(content['password']),
+            'name': content['name'],
+            'businessName': content['businessName'],
+            'location': content['location']
         })
         print(user_id, file=sys.stderr)
         return jsonify({'id': str(user_id)})

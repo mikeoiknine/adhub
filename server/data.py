@@ -4,13 +4,53 @@ from flask import (
         Blueprint, request, jsonify, g, session
 )
 from db import mongo
-from .auth import login_required
 import helper
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
-@bp.route('/aditem', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def ad_item_controller():
+@bp.route('/me', methods=['GET'])
+def get_user_info():
+    if method.request != 'GET':
+        return jsonify({'msg': 'Invalid request type'})
+
+    if 'user_id' not in content or content['user_id'] is "":
+        return jsonify({'msg': 'Invalid request - Missing user_id'})
+
+    user = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) } )
+    return jsonify(user)
+
+@bp.route('/ads', methods=['GET'])
+def get_user_ads():
+    """
+    Return all the ads that this user has uploaded.
+
+    Expected:
+    user_id: Id of the user
+    """
+    if request.method != 'GET':
+        return jsonify({'msg': 'Invalid request type'})
+
+    content = request.json
+    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+
+    print("User ads:", users_ads)
+
+    data = {}
+    ads = mongo.db.advertisements
+    for ad_id in users_ads['ads']:
+        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
+        if ad_item is not None:
+            print("Appending:", ad_item['name'])
+            data[ad_id] = ad_item
+        else:
+            print("Ad with id:", ad_id, "is None")
+
+    return jsonify({'msg': 'Success!', 'ads': data})
+
+
+
+@bp.route('/add', methods=['POST'])
+def add_item():
     """
     Allows user to add new ad to the system
 
@@ -22,38 +62,69 @@ def ad_item_controller():
     upload_date: Current date
     category: Type of ad being uploaded
     """
+    if request.method != 'POST':
+        return jsonify({'msg': 'Invalid request type'})
+
     content = request.json
 
-    if request.method == 'POST':
-        # Save image in Azure Blob for this user
-        ad_id = uuid.uuid1()
-        image_path = helper.decode_image(ad_id, content['image_64'])
+    # Save image in Azure Blob for this user
+    ad_id = uuid.uuid1()
+    image_path = helper.decode_image(ad_id, content['image_64'])
 
-        # Add advertisement item
-        ads = mongo.db.advertisements
-        ad_id = ads.insert({
-                'ad_id': str(ad_id),
-                'user_id': content['user_id'],
-                'name': content['name'],
-                'image_path': image_path,
-                'image_64': content['image_64'],
-                'region': content['region'],
-                'upload_date': content['upload_date'],
-                'category': content['category'],
-                'stats': {
-                    'day_view_count': 0,
-                    'month_view_count': 0,
-                    'year_view_count': 0,
-                    'total_view_count': 0
-                    }
-                })
+    # Add advertisement item
+    ads = mongo.db.advertisements
+    ad_id = ads.insert({
+            'ad_id': str(ad_id),
+            'user_id': content['user_id'],
+            'name': content['name'],
+            'image_path': image_path,
+            'image_64': content['image_64'],
+            'region': content['region'],
+            'upload_date': content['upload_date'],
+            'category': content['category'],
+            'stats': {
+                'day_view_count': 0,
+                'month_view_count': 0,
+                'year_view_count': 0,
+                'total_view_count': 0
+                }
+            })
 
-        # Add this ad to the user
-        mongo.db.users.update(
-            { '_id': ObjectId(content['user_id']) },
-            { '$addToSet': { 'ads': str(ad_id) } },
-            upsert=True
-        )
+    # Add this ad to the user
+    mongo.db.users.update(
+        { '_id': ObjectId(content['user_id']) },
+        { '$addToSet': { 'ads': str(ad_id) } },
+        upsert=True
+    )
+
+    return jsonify({'msg': 'Success!'})
+
+@bp.route('/delete', methods=['DELETE'])
+def remove_ad_item():
+    """
+    Remove a specific ad
+
+    Expected:
+    user_id: ID of the user this ad belongs to
+    ad_id: ID of the ad that is to be deleted
+    """
+    if request.method != 'DELETE':
+        return jsonify({'msg': 'Invalid request type'})
+
+    content = request.json
+    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+    if users_ads is None:
+        return jsonify({'msg': 'Invalid request - No ads for this user'})
+
+    # Check if the ad_id belongs to this user
+    if content['ad_id'] not in users_ads['ads']:
+        return jsonify({'msg': 'Invalid request - No ad with this id for this user'})
+
+    # Remove this ad from the advertisement
+    mongo.db.advertisements.remove( {'_id': ObjectId(content['ad_id']) } )
+
+    # Remove this ad from the users ad list
+    mongo.db.users.update( {'_id': ObjectId(content['user_id']) }, {"$pull": {"ads": content['ad_id']} } )
 
     return jsonify({'msg': 'Success!'})
 
@@ -69,7 +140,7 @@ def set_user_config():
     category: Type of preferred ad
     """
     if request.method != 'POST':
-        return None
+        return jsonify({'msg': 'Invalid request type'})
 
     content = request.json
 
@@ -128,11 +199,12 @@ def get_next_ad():
     adverts = mongo.db.advertisements
 
     filter_by = {}
-    if 'category' in user_config and user_config['category'] is not "":
-        filter_by['category'] = user_config['category']
+    if user_config is not None:
+        if 'category' in user_config and user_config['category'] is not "":
+            filter_by['category'] = user_config['category']
 
-    if 'region' in user_config and user_config['region'] is not "":
-        filter_by['region'] = user_config['region']
+        if 'region' in user_config and user_config['region'] is not "":
+            filter_by['region'] = user_config['region']
 
     print("Filters applied:", filter_by)
     ads = adverts.find(filter_by).sort([('total_view_count', -1)])
