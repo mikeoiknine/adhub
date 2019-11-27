@@ -16,9 +16,19 @@
           <input matInput placeholder="Johnny electronics repair shop" formControlName="businessController">
         </mat-form-field>
 
+        <mat-form-field>
+          <mat-label>Neighborhood</mat-label>
+          <mat-select formGroupName="locationController">
+            <mat-option *ngFor="let location of LOCATIONS" [value]="location">
+              {{location}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput placeholder="twat@twat.com" formControlName="emailController">
+          <input matInput placeholder="johnny@gmail.com" formControlName="emailController">
         </mat-form-field>
 
         <mat-form-field appearance="outline">

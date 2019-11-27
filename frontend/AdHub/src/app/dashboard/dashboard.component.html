@@ -1,7 +1,13 @@
 <app-ad-player *ngIf="viewerEnable" [image_base_64]="viewingImage"></app-ad-player>
 <div class="body" *ngIf="!viewerEnable">
-  <mat-toolbar>
-    <span>Adhub</span>
+  <mat-toolbar class="toolbar">
+    <img class="logo" src="../../assets/images/logo_extracted.png">
+    <div class="inner-toolbar">
+      <p>Hi {{user.name}}</p>
+      <span class="logout-container">
+        <button id="logout" mat-flat-button color="warn" (click)="logout()">Logout</button>
+      </span>
+    </div>
   </mat-toolbar>
 
 
@@ -11,7 +17,7 @@
     <mat-divider></mat-divider>
 
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let ad of activeAds">
+      <mat-expansion-panel *ngFor="let ad of allAds | isActiveAd">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ad.name}}
@@ -41,7 +47,12 @@
               </ul>
             </span>
             <span>
-              <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
+              Actions
+              <ul class="ad-info">
+              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                    </button> Delete </li>
+              </ul>
             </span>
 
           </div>
@@ -59,13 +70,12 @@
     </span>
 
 
-
     <p class="title-ads">Inactive Ads</p>
 
     <mat-divider></mat-divider>
 
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let ad of inactiveAds">
+      <mat-expansion-panel *ngFor="let ad of allAds | isActiveAd: 'inactive'">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ad.name}}
@@ -74,8 +84,8 @@
             {{ad.uploadedDate | date:'medium' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
-      <div class="outer-pannel-description">
-        <div class="expansion-description">
+        <div class="outer-pannel-description">
+          <div class="expansion-description">
           <span>
             Ad Info
             <ul class="ad-info">
@@ -85,7 +95,7 @@
               <li>Display Locations : {{ad.location}}</li>
             </ul>
           </span>
-          <span>
+            <span>
             Ad Stats
             <ul class="ad-info">
               <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
@@ -93,23 +103,28 @@
               <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
             </ul>
           </span>
-          <span>
-            <mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle>
-          </span>
-    
+            <span>
+              Actions
+              <ul class="ad-info">
+              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                    </button> Delete </li>
+              </ul>
+            </span>
+
+          </div>
+          <img class="ad-image" src="{{ad.image_64}}" width="20%">
+
         </div>
-      <img class="ad-image" src="{{ad.image_64}}" width="20%">
 
-      </div>
+      </mat-expansion-panel>
+    </mat-accordion>
 
-  </mat-expansion-panel>
-  </mat-accordion>
-
-  <span class="button-container-footer">
-    <button mat-fab (click)="openImageViewer()">View</button>
-    <button mat-fab (click)="openAdUploadDialog()">Upload</button>
+    <span class="button-container-footer">
+    <button mat-fab color="warn" (click)="openImageViewer()">View</button>
+    <button mat-fab color="warn" (click)="openAdUploadDialog()">Upload</button>
   </span>
-</div>
+  </div>
 </div>
 
 

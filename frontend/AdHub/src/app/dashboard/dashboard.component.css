@@ -5,6 +5,34 @@
   margin-top: 10px !important;
 }
 
+#logout{
+  margin-right: 8px;
+  margin-left: 8px;
+}
+
+.logout-container{
+  display: flex;
+  align-items: center;
+}
+
+.toolbar{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.inner-toolbar{
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo{
+  display: block;
+  max-width:150px;
+  width: auto;
+  height: auto;
+}
+
 .ad-image{
   display: block;
   max-width:20%;
@@ -41,7 +69,7 @@ mat-expansion-panel-header-description {
 
 .body{
   position: relative;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   background-color: #303030;
 }

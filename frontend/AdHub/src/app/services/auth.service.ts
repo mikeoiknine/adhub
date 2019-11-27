@@ -34,6 +34,24 @@ export class AuthService {
     });
   }
 
+  register(name: string, email: string, password: string, location: string, businessName: string){
+
+    const params = {
+      name: name,
+      email: email,
+      password: password,
+      location: location,
+      businessName: businessName
+    };
+
+    this.http.post(host + this.PATH + this.REGISTER_PATH, params).subscribe(value => {
+      this.router.navigate(['/login']);
+      console.log('registered');
+    },error => {
+      console.log('nope');
+    });
+  }
+
   logout(){
     this.saveState(null);
     this.router.navigate(['/login']);
@@ -44,11 +62,11 @@ export class AuthService {
   }
 
   saveState(userId){
-    localStorage.setItem('userId', userId);
+    localStorage.setItem('adhub_userId', userId);
   }
 
   getState(){
-    return localStorage.getItem('userId');
+    return localStorage.getItem('adhub_userId');
   }
 
 }

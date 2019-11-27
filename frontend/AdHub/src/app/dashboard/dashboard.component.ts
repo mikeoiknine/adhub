@@ -2,7 +2,7 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {AdItem, AdItemStats, User} from '../models/models';
 import {AdvertisementService} from '../services/advertisement.service';
 import {AuthService} from '../services/auth.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {AdUploaderComponent} from '../ad-uploader/ad-uploader.component';
 import {image_base_64} from '../mockData/mockAds';
 import {animate, style, transition, trigger} from '@angular/animations';
@@ -26,23 +26,16 @@ import {AddViewerDialogComponent} from '../add-viewer-dialog/add-viewer-dialog.c
 })
 export class DashboardComponent implements OnInit {
 
-  private activeAds: AdItem[] = [];
-  private inactiveAds: AdItem[] = [];
+  private allAds: AdItem[] = [];
   private user: User;
   private viewerEnable = false;
   private viewingImage: String = null;
 
-  constructor(private adService: AdvertisementService, private authService: AuthService, private dialog: MatDialog) {
+  constructor(private adService: AdvertisementService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
-    this.adService.getAdvertisement().forEach(ad => {
-      if (ad.active) {
-        this.activeAds.push(ad);
-      } else {
-        this.inactiveAds.push(ad);
-      }
-    });
+    this.allAds = this.adService.getMyAdvertisement();
     this.user = this.authService.getMe();
   }
 
@@ -54,7 +47,7 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-        this.activeAds.push({
+        this.allAds.push({
           id: '1',
           stats: {
             numberOfTimeSeeMonth: 0,
@@ -90,25 +83,29 @@ export class DashboardComponent implements OnInit {
 
   changeActiveState(item: AdItem, state: boolean) {
 
-    if (state === false) {
-      let ad = this.activeAds.find((ad) => ad === item)
-      ad.active = state;
-      this.inactiveAds.push(ad);
+    this.allAds.find((ad) => ad === item).active = state;
+  }
 
-      var index = this.activeAds.indexOf(ad);
-      this.activeAds.splice(index, 1);
+  deleteAd(id: string){
 
-    } else {
+  const adToDelete = this.allAds.find((ad) => ad.id === id);
 
-      let ad = this.inactiveAds.find((ad) => ad === item)
-      ad.active = state;
-      this.activeAds.push(ad);
+    this.adService.deleteAd(id).subscribe(() => {
+      this.snackBar.open('Ad deleted: ' +adToDelete.name , '',{
+        duration: 1000,
+      } );
 
-      var index = this.inactiveAds.indexOf(ad);
-      this.inactiveAds.splice(index, 1);
+      this.allAds.splice(this.allAds.indexOf(adToDelete), 1);
 
-    }
-  
+    }, (error) => {
+      this.snackBar.open('Could not delete ad with id: '+  id + ' Error: '+ error.error.message, '',{
+        duration: 1000,
+      } );
+    });
+  }
+
+  logout(){
+    this.authService.logout();
   }
 
   async delay(ms: number) {
