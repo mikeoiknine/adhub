@@ -41,7 +41,7 @@ export class AdvertisementService {
 
   deleteAd(id: string){
     const params = new HttpParams()
-      .set('image_id', id)
+      .set('ad_id', id)
       .set('user_id', this.authService.getMyId());
     return this.http.delete(host + this.PATH + this.DELETE_AD, {params: params});
   }

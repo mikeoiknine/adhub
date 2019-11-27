@@ -62,20 +62,26 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-        this.allAds.push({
-          id: '1',
-          stats: {
-            numberOfTimeSeeMonth: 0,
-            numberOfTimeSeeWeek: 0,
-            numberOfTimeSeeDay: 0
-          },
-          uploadedDate: new Date(),
-          active: true,
-          name: result['name'],
-          userId: this.user.id,
-          imagePath: 'some path',
-          image_64: result['base64']
-        });
+
+        this.adService.uploadAd(result['name'],result['category'], result['location'],result['base_64'])
+          .subscribe(() => {
+            this.allAds.push({
+            id: '1',
+            stats: {
+              numberOfTimeSeeMonth: 0,
+              numberOfTimeSeeWeek: 0,
+              numberOfTimeSeeDay: 0
+            },
+            uploadedDate: new Date(),
+            active: true,
+            category: result['type'],
+            name: result['name'],
+            userId: this.user.id,
+            imagePath: 'some path',
+            image_64: result['base64']
+          });}, (error) => {
+            console.log('Error when uploading image' + error.error.message);
+          });
       }
     });
   }

@@ -15,7 +15,8 @@ const mockAds = [
     } as AdItemStats,
     uploadedDate: new Date(2019,10,12),
     userId: '1234567890',
-    active: true
+    active: true,
+    category: 'Food'
   },
   {
     id: '2',
@@ -29,7 +30,8 @@ const mockAds = [
     } as AdItemStats,
     uploadedDate: new Date(2019,10,27),
     userId: '1234567890',
-    active: false
+    active: false,
+    category: 'Food'
   }
 ] as AdItem[];
 

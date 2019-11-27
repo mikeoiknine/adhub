@@ -6,7 +6,7 @@ const mockUser = {
   id: '1234567890',
   company: 'Big Falafel inc',
   address: '1888 Cote-des-Neiges',
-  adItems: []
+  ads: []
 } as User;
 
 export default mockUser;
