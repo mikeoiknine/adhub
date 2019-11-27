@@ -3,17 +3,19 @@ from bson.objectid import ObjectId
 from flask import (
         Blueprint, request, jsonify, g, session
 )
-from db import mongo
-import helper
+from .db import mongo
+from . import helper
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
 @bp.route('/me', methods=['GET'])
 def get_user_info():
-    if method.request != 'GET':
+    if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
-    if 'user_id' not in content or content['user_id'] is "":
+    content = request.args
+
+    if 'user_id' not in content or content['user_id'] == "":
         return jsonify({'msg': 'Invalid request - Missing user_id'})
 
     user = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) } )
@@ -30,22 +32,58 @@ def get_user_ads():
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.args
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
 
     print("User ads:", users_ads)
 
     data = {}
     ads = mongo.db.advertisements
-    for ad_id in users_ads['ads']:
-        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
-        if ad_item is not None:
-            print("Appending:", ad_item['name'])
-            data[ad_id] = ad_item
-        else:
-            print("Ad with id:", ad_id, "is None")
+    if users_ads.get('ads', None) is not None:
+        for ad_id in users_ads['ads']:
+            ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
+            if ad_item is not None:
+                print("Appending:", ad_item['name'])
+                data[ad_id] = ad_item
+            else:
+                print("Ad with id:", ad_id, "is None")
 
     return jsonify({'msg': 'Success!', 'ads': data})
+
+
+
+# @bp.route('/add', methods=['POST'])
+# def add_item():
+#     """
+#     Allows user to add new ad to the system
+#
+#     Expected Fields:
+#     user_id: ID of the user adding this ad item
+#     name: Name of the ad image
+#     image_64: Base64 encoded string of the image
+#     region: Region that the ad is being uploaded from
+#     upload_date: Current date
+#     category: Type of ad being uploaded
+#     """
+#     if request.method != 'POST':
+#         return jsonify({'msg': 'Invalid request type'})
+#
+#     content = request.json
+#     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+#
+#     print("User ads:", users_ads)
+#
+#     data = {}
+#     ads = mongo.db.advertisements
+#     for ad_id in users_ads['ads']:
+#         ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
+#         if ad_item is not None:
+#             print("Appending:", ad_item['name'])
+#             data[ad_id] = ad_item
+#         else:
+#             print("Ad with id:", ad_id, "is None")
+#
+#     return jsonify({'msg': 'Success!', 'ads': data})
 
 
 
@@ -65,42 +103,7 @@ def add_item():
     if request.method != 'POST':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
-    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
-
-    print("User ads:", users_ads)
-
-    data = {}
-    ads = mongo.db.advertisements
-    for ad_id in users_ads['ads']:
-        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
-        if ad_item is not None:
-            print("Appending:", ad_item['name'])
-            data[ad_id] = ad_item
-        else:
-            print("Ad with id:", ad_id, "is None")
-
-    return jsonify({'msg': 'Success!', 'ads': data})
-
-
-
-@bp.route('/add', methods=['POST'])
-def add_item():
-    """
-    Allows user to add new ad to the system
-
-    Expected Fields:
-    user_id: ID of the user adding this ad item
-    name: Name of the ad image
-    image_64: Base64 encoded string of the image
-    region: Region that the ad is being uploaded from
-    upload_date: Current date
-    category: Type of ad being uploaded
-    """
-    if request.method != 'POST':
-        return jsonify({'msg': 'Invalid request type'})
-
-    content = request.json
+    content = request.get_json()
 
     # Save image in Azure Blob for this user
     ad_id = uuid.uuid1()
@@ -146,7 +149,7 @@ def remove_ad_item():
     if request.method != 'DELETE':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.get_json()
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
     if users_ads is None:
         return jsonify({'msg': 'Invalid request - No ads for this user'})
@@ -177,7 +180,7 @@ def set_user_config():
     if request.method != 'POST':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.get_json()
 
     config_file = {}
     if 'region' in content:
@@ -200,7 +203,7 @@ def get_ad_stats():
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.get_json()
     if content['ad_id'] is None or len(content['ad_id']) < 12:
         return jsonify({'msg': 'No such ad ID'})
 
@@ -227,7 +230,7 @@ def get_next_ad():
     if request.method != 'POST':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.get_json()
     user_config = mongo.db.users_config.find_one({'_id': ObjectId(content['user_id'])})
     print("User Config is:", user_config)
     print("Requested filters:", content)
@@ -235,10 +238,10 @@ def get_next_ad():
 
     filter_by = {}
     if user_config is not None:
-        if 'category' in user_config and user_config['category'] is not "":
+        if 'category' in user_config and user_config['category'] != "":
             filter_by['category'] = user_config['category']
 
-        if 'region' in user_config and user_config['region'] is not "":
+        if 'region' in user_config and user_config['region'] != "":
             filter_by['region'] = user_config['region']
 
     print("Filters applied:", filter_by)
@@ -253,7 +256,7 @@ def get_next_ad():
             { '$inc': { 'stats.total_view_count': 1} } ,
             upsert=True
         )
-        print("returning ad:", ad['_id'])
+        print("returning ad:", ads['_id'])
         return jsonify({ 'msg': 'Success!', 'ad_id': str(ads[0]['_id']), 'image_64': ads[0]['image_64']})
 
     for ad in ads:

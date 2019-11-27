@@ -126,3 +126,5 @@ dmypy.json
 
 
 frontend/AdHub/.vs/
+
+server/.idea/

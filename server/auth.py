@@ -3,10 +3,10 @@ import sys
 import functools
 
 from flask import (
-        Blueprint, request, jsonify, g, session
+        Blueprint, request, jsonify, g, session, make_response
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import mongo
+from .db import mongo
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -15,7 +15,7 @@ def register():
     if request.method != 'POST':
         return jsonify({"msg": "Invalid Request type"})
 
-    content = request.json
+    content = request.get_json()
     if 'username' not in content or content['username'] == "":
         return jsonify({"msg": "Invalid Request - Missing username field"})
     if 'password' not in content or content['password'] == "":
@@ -48,7 +48,7 @@ def login():
     if request.method != 'POST':
         return
 
-    content = request.json
+    content = request.get_json()
     if 'username' not in content or content['username'] == "":
         return jsonify({"msg": "Invalid Request - Missing username field"})
     if 'password' not in content or content['password'] == "":

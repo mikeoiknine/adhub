@@ -11,8 +11,5 @@ export class AppComponent {
   title = 'AdHub';
 
   constructor(private authService: AuthService){
-    if(!environment.debug_login) {
-      this.authService.saveState('mock');
-    }
   }
 }

@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_pymongo import PyMongo
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
+import os
 
 def create_app(test_config=None):
     # create and configure the app
@@ -14,7 +15,7 @@ def create_app(test_config=None):
 
     app.config["MONGO_URI"] = "mongodb://localhost:27017/test"
 
-    from db import mongo
+    from .db import mongo
     mongo.init_app(app)
 
     CORS(app)
@@ -42,5 +43,7 @@ def create_app(test_config=None):
 
     from . import data
     app.register_blueprint(data.bp)
+
+    [str(p) for p in app.url_map.iter_rules()]
 
     return app

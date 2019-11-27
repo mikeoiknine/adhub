@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   logout(){
-    this.saveState(null);
+    localStorage.removeItem('adhub_userId');
     this.router.navigate(['/login']);
   }
 
