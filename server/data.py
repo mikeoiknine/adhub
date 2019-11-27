@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-from models import AuthUser
-
-def init_users():
-    rob = AuthUser(a_id='1234', email='rob@live.ca', user_id='12344', password='password')
-    rob.save()
-=======
 import uuid
 from bson.objectid import ObjectId
 from flask import (
@@ -18,6 +11,17 @@ bp = Blueprint('data', __name__, url_prefix='/data')
 
 @bp.route('/aditem', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def ad_item_controller():
+    """
+    Allows user to add new ad to the system
+
+    Expected Fields:
+    user_id: ID of the user adding this ad item
+    name: Name of the ad image
+    image_64: Base64 encoded string of the image
+    region: Region that the ad is being uploaded from
+    upload_date: Current date
+    category: Type of ad being uploaded
+    """
     content = request.json
 
     if request.method == 'POST':
@@ -54,8 +58,16 @@ def ad_item_controller():
     return jsonify({'msg': 'Success!'})
 
 @bp.route('/config', methods=['POST'])
-#@login_required
 def set_user_config():
+    """
+    Sets the user config which describes the types of ads this user is interested in
+    If the user is not interested in any particular filters, they should be omitted or left blank.
+
+    Expected Fields:
+    user_id: The ID of the user this config corresponds to
+    region: Preferred Region
+    category: Type of preferred ad
+    """
     if request.method != 'POST':
         return None
 
@@ -73,6 +85,12 @@ def set_user_config():
 
 @bp.route('/adstat', methods=['GET'])
 def get_ad_stats():
+    """
+    Returns the stats of the ad corresponding to the passed id
+
+    Expected Fields:
+    ad_id: Id of the adverstisement of interest
+    """
     if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
@@ -103,7 +121,6 @@ def get_next_ad():
     if request.method != 'POST':
         return jsonify({'msg': 'Invalid request type'})
 
-
     content = request.json
     user_config = mongo.db.users_config.find_one({'_id': ObjectId(content['user_id'])})
     print("User Config is:", user_config)
@@ -132,7 +149,6 @@ def get_next_ad():
         print("returning ad:", ad['_id'])
         return jsonify({ 'msg': 'Success!', 'ad_id': str(ads[0]['_id']), 'image_64': ads[0]['image_64']})
 
-
     for ad in ads:
         if str(ad['_id']) != content['last_ad_id']:
             mongo.db.advertisements.update(
@@ -146,16 +162,3 @@ def get_next_ad():
                 'ad_id': str(ad['_id']),
                 'image_64': ad['image_64']
                 })
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 3fd9b72... Crude attempt at returning new ads
