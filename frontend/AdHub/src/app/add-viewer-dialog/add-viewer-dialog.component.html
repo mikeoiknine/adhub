@@ -2,8 +2,8 @@
 <div class="view-form">
 
   <mat-form-field>
-    <mat-label>Types to exclude</mat-label>
-    <mat-select placeholder="Toppings" [formControl]="excludedTypeController" multiple>
+    <mat-label>Wanted Categories</mat-label>
+    <mat-select placeholder="Toppings" [formControl]="includedTypeController" multiple>
       <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -12,6 +12,6 @@
 
 <span class="button-holder">
   <button mat-flat-button color="primary" (click)="closeDialog(false)">Cancel</button>
-  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="excludedTypeController.invalid">Save</button>
+  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="includedTypeController.invalid">Save</button>
 </span>
 

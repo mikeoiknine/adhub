@@ -7,6 +7,7 @@ import {AdUploaderComponent} from '../ad-uploader/ad-uploader.component';
 import {image_base_64} from '../mockData/mockAds';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {AddViewerDialogComponent} from '../add-viewer-dialog/add-viewer-dialog.component';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,14 +30,28 @@ export class DashboardComponent implements OnInit {
   private allAds: AdItem[] = [];
   private user: User;
   private viewerEnable = false;
-  private viewingImage: String = null;
+  private viewingImage: string = null;
+  private viewingImageID: string = null;
+
+  private activeSubscription: Subscription = null;
 
   constructor(private adService: AdvertisementService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
-    this.allAds = this.adService.getMyAdvertisement();
-    this.user = this.authService.getMe();
+    this.adService.getMyAds().subscribe((result) => {
+      this.allAds = Array.from( result['ads'].values());
+    }, ()=> {
+      this.snackBar.open('Cannot connect to server. Try again', '', {
+        duration: 2000
+      });
+    });
+    this.authService.getMe().subscribe((result) =>{
+        this.user = result;
+      },
+      (error) => {
+        console.log('Error when fetching active user');
+    });
   }
 
   openAdUploadDialog() {
@@ -112,11 +127,29 @@ export class DashboardComponent implements OnInit {
     await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log('fired'));
   }
 
+  async startStreamingAds(included: string[]){
+    await this.adService.sendConfiguration(included);
+
+    this.activeSubscription = this.adService.startStreaming().subscribe(() => {
+      this.adService.getNextAdd(this.viewingImageID).subscribe( (obj) => {
+        this.viewingImageID = obj['ad_id'];
+        this.viewingImageID = obj['image_64'];
+      }, (error) => {
+        this.closeAdStreaming();
+      });
+    });
+  }
+
+  closeAdStreaming(){
+    this.viewerEnable = false;
+    this.viewingImage = null;
+    this.activeSubscription.unsubscribe();
+  }
+
   @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     console.log('Escape pressed');
     this.delay(300).then(any => {
-      this.viewerEnable = false;
-      this.viewingImage = null;
+      this.closeAdStreaming();
     });
   }
 }

@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import mockUser from '../mockData/mockUser';
 import {User} from '../models/models';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {host} from '../../environments/environment';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  readonly PATH ='/auth/';
+  readonly AUTH_PATH ='/auth/';
+  readonly DATA_PATH = '/data/';
   readonly LOGIN_PATH ='login';
   readonly REGISTER_PATH ='register';
+  readonly ME_PATH ='me';
 
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -25,7 +28,7 @@ export class AuthService {
 
     const params = {username: username, password: password};
 
-    this.http.post(host + this.PATH + this.LOGIN_PATH, params).subscribe(value => {
+    this.http.post(host + this.AUTH_PATH + this.LOGIN_PATH, params).subscribe(value => {
       this.saveState(value['id']);
       this.router.navigate(['/dashboard']);
       console.log('yay');
@@ -38,13 +41,13 @@ export class AuthService {
 
     const params = {
       name: name,
-      email: email,
+      username: email,
       password: password,
       location: location,
       businessName: businessName
     };
 
-    this.http.post(host + this.PATH + this.REGISTER_PATH, params).subscribe(value => {
+    this.http.post(host + this.AUTH_PATH + this.REGISTER_PATH, params).subscribe(value => {
       this.router.navigate(['/login']);
       console.log('registered');
     },error => {
@@ -57,8 +60,9 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  getMe(): User {
-    return mockUser;
+  getMe(): Observable<User> {
+    const params = new HttpParams().set('user_id', this.getState());
+    return this.http.get<User>(host + this.DATA_PATH + this.ME_PATH, {params: params});
   }
 
   saveState(userId){
@@ -67,6 +71,10 @@ export class AuthService {
 
   getState(){
     return localStorage.getItem('adhub_userId');
+  }
+
+  getMyId(){
+    return this.getState();
   }
 
 }
