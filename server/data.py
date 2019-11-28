@@ -68,13 +68,11 @@ def add_item():
     content = request.json
 
     # Save image in Azure Blob for this user
-    ad_id = uuid.uuid1()
-    image_path = helper.decode_image(ad_id, content['image_64'])
+    #image_path = helper.decode_image(ad_id, content['image_64'])
 
     # Add advertisement item
     ads = mongo.db.advertisements
     ad_id = ads.insert({
-            'ad_id': str(ad_id),
             'user_id': content['user_id'],
             'name': content['name'],
             'image_path': image_path,
@@ -266,3 +264,71 @@ def set_active_status():
         )
 
     return jsonify({'msg': 'Success!'})
+
+@bp.route('/myrevenue', methods=['GET'])
+def get_revenue():
+    """
+    Returns the total revenue the user has earned thus far
+
+    The revenue is calculated: (total ads displayed) * 0.01$
+
+    Expected Field:
+    user_id: ID of the user requesting the data
+    """
+    if request.method != 'GET':
+        return jsonify({'msg': 'Invalid request type'})
+
+    content = request.json
+
+    if 'user_id' not in content or content['user_id'] is "":
+        return jsonify({'msg': 'Invalid request - Missing user_id'})
+
+    total_views = mongo.db.users.find_one( {'_id': ObjectId(content['user_id']) },
+            { '_id': 0, 'stats.total_ads_displayed': 1 })
+
+    return jsonify({'msg': 'Success!', 'revenue': ( 0.01 * total_views['stats']['total_ads_displayed'])})
+
+
+@bp.route('/myexpense', methods=['GET'])
+def get_expense():
+    """
+    Returns the total expense the user will be charged for his ads
+    being displayed
+
+    The expense is calculated: (total views on ads uploaded) * 0.02$
+
+    Expected Field:
+    user_id: ID of the user requesting the data
+    """
+    if request.method != 'GET':
+        return jsonify({'msg': 'Invalid request type'})
+
+    content = request.json
+
+    if 'user_id' not in content or content['user_id'] is "":
+        return jsonify({'msg': 'Invalid request - Missing user_id'})
+
+    advertisements = mongo.db.advertisements
+
+    # Get all ads for this user
+    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+
+    total_views = 0
+    for ad in users_ads['ads']:
+        views = advertisements.find_one({ '_id': ObjectId(ad) }, {'_id': 0, 'stats': 1} )
+        if views is None:
+            continue
+        print("Views:", views)
+        total_views += views['stats']['total_view_count']
+
+
+
+    return jsonify({'msg': 'Success!', 'expense': ( 0.02 * total_views)})
+
+
+
+
+
+
+
+
