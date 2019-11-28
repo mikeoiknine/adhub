@@ -202,38 +202,47 @@ def get_next_ad():
 
     filter_by = {}
     if user_config is not None:
+        print("applying filters...")
         if 'category' in user_config and user_config['category'] is not "":
             filter_by['category'] = user_config['category']
 
         if 'region' in user_config and user_config['region'] is not "":
-            filter_by['region'] = user_config['region']
+            filter_by['region'] = "{ '$nin' : user_config['region'] }"
 
     print("Filters applied:", filter_by)
     ads = advertisements.find(filter_by).sort([('total_view_count', -1)])
 
     if ads.count() == 0:
+        print('0 ads found')
         return jsonify({'msg': 'No image matching query'})
 
+    print("loopidity doopity")
     for ad in ads:
-        if str(ad['_id']) != content['last_ad_id']:
-            # update the users ad display count
-            mongo.db.users.update(
-                    { '_id': ObjectId(content['user_id']) },
-                    { '$inc': { 'stats.total_ads_displayed': 1} },
-                    upsert=True)
+        print("Analysizing:", str(ad['_id']), "......")
+        if 'last_ad_id' in content and str(ad['_id']) == content['last_ad_id']:
+            continue
+        print(ad['name'], 'has different ID!')
+        # update the users ad display count
+        mongo.db.users.update(
+                { '_id': ObjectId(content['user_id']) },
+                { '$inc': { 'stats.total_ads_displayed': 1} },
+                upsert=True)
 
-            # Update the ad view count
-            mongo.db.advertisements.update(
-                { '_id': ObjectId(ad['_id']) },
-                { '$inc': { 'stats.total_view_count': 1} } ,
-                upsert=True
-            )
+        # Update the ad view count
+        mongo.db.advertisements.update(
+            { '_id': ObjectId(ad['_id']) },
+            { '$inc': { 'stats.total_view_count': 1} } ,
+            upsert=True
+        )
 
-            print("returning ad:", ad['_id'])
-            return jsonify({'msg': 'Success!',
-                'ad_id': str(ad['_id']),
-                'image_64': ad['image_64']
-                })
+        print("returning ad:", ad['_id'])
+        return jsonify({'msg': 'Success!',
+            'ad_id': str(ad['_id']),
+            'image_64': ad['image_64']
+            })
+    return jsonify({'msg': 'No image matching query'})
+
+
 
 @bp.route('/setactive', methods=['POST', 'PUT'])
 def set_active_status():
