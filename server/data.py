@@ -42,69 +42,17 @@ def get_user_ads():
     ads = mongo.db.advertisements
     if users_ads.get('ads', None) is not None:
         for ad_id in users_ads['ads']:
-            ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
+            ad_item = ads.find_one( {'_id': ObjectId(ad_id) })
+
             if ad_item is not None:
                 print("Appending:", ad_item['name'])
+                # Removing $oid tag
+                ad_item['_id'] = str(ad_item['_id'])
                 data.append(ad_item)
             else:
                 print("Ad with id:", ad_id, "is None")
 
     return jsonify({'msg': 'Success!', 'ads': data})
-
-
-
-# @bp.route('/add', methods=['POST'])
-# def add_item():
-#     """
-#     Allows user to add new ad to the system
-#
-#     Expected Fields:
-#     user_id: ID of the user adding this ad item
-#     name: Name of the ad image
-#     image_64: Base64 encoded string of the image
-#     region: Region that the ad is being uploaded from
-#     upload_date: Current date
-#     category: Type of ad being uploaded
-#     """
-#     if request.method != 'POST':
-#         return jsonify({'msg': 'Invalid request type'})
-#
-#     content = request.json
-#     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
-#
-#     print("User ads:", users_ads)
-#
-#     data = {}
-#     ads = mongo.db.advertisements
-#     for ad_id in users_ads['ads']:
-#         ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
-#         if ad_item is not None:
-#             print("Appending:", ad_item['name'])
-#             data[ad_id] = ad_item
-#         else:
-#             print("Ad with id:", ad_id, "is None")
-#
-#     return jsonify({'msg': 'Success!', 'ads': data})
-
-
-    content = request.json
-    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
-
-    print("User ads:", users_ads)
-
-    data = {}
-    ads = mongo.db.advertisements
-    for ad_id in users_ads['ads']:
-        ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
-        if ad_item is not None:
-            print("Appending:", ad_item['name'])
-            data[ad_id] = ad_item
-        else:
-            print("Ad with id:", ad_id, "is None")
-
-    return jsonify({'msg': 'Success!', 'ads': data})
-
-
 
 @bp.route('/add', methods=['POST'])
 def add_item():
@@ -125,16 +73,14 @@ def add_item():
     content = request.json
 
     # Save image in Azure Blob for this user
-    ad_id = uuid.uuid1()
-    image_path = helper.decode_image(ad_id, content['image_64'])
+    # image_path = helper.decode_image(, content['image_64'])
 
     # Add advertisement item
     ads = mongo.db.advertisements
     ad_id = ads.insert({
-            'ad_id': str(ad_id),
             'user_id': content['user_id'],
             'name': content['name'],
-            'image_path': image_path,
+            # 'image_path': image_path,
             'image_64': content['image_64'],
             'region': content['region'],
             'upload_date': content['upload_date'],
@@ -184,7 +130,7 @@ def remove_ad_item():
     # Remove this ad from the users ad list
     mongo.db.users.update( {'_id': ObjectId(content['user_id']) }, {"$pull": {"ads": content['ad_id']} } )
 
-    return jsonify({'msg': 'Success!', 'ad_id': content[ad_id] })
+    return jsonify({'msg': 'Success!', 'ad_id': content['ad_id'] })
 
 @bp.route('/config', methods=['POST'])
 def set_user_config():
@@ -289,7 +235,7 @@ def get_next_ad():
         # Update the ad view count
         mongo.db.advertisements.update(
             { '_id': ObjectId(ad['_id']) },
-            { '$inc': { 'stats.total_view_count': 1} } ,
+            { '$inc': { 'stats.total_view_count': 1, 'stats.year_view_count': 1, 'stats.month_view_count': 1, 'stats.day_view_count': 1} } ,
             upsert=True
         )
 
@@ -298,7 +244,7 @@ def get_next_ad():
             'ad_id': str(ad['_id']),
             'image_64': ad['image_64']
             })
-    return jsonify({'msg': 'No image matching query'})
+    return jsonify({'msg': 'No image matching query'}), 510
 
 
 
@@ -316,7 +262,7 @@ def set_active_status():
     if request.method != 'POST' and request.method != 'PUT':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.json
+    content = request.get_json()
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
     if users_ads is None:
         return jsonify({'msg': 'Invalid request - No ads for this user'})

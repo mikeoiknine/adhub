@@ -17,15 +17,11 @@ export class AdvertisementService {
   private readonly NEXT = 'next';
   private readonly GET_MY_ADS = 'ads';
   private readonly DELETE_AD = 'delete';
-  private readonly CHANGE_ACTIVE_AD = '';
+  private readonly CHANGE_ACTIVE_AD = 'setactive';
 
   private periodicSubscriber: Observable<any>;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
-
-  getMyAdvertisement(): AdItem[]{
-    return mockAds;
-  }
 
   uploadAd(name: string, category: String, locations: string[], image_64: string){
     const body = {
@@ -74,6 +70,18 @@ export class AdvertisementService {
       .set('user_id', this.authService.getMyId());
 
     return this.http.get(host + this.PATH + this.GET_MY_ADS, {params: params});
+  }
+
+  setActiveStatus(ad_id: string, active: boolean){
+    const body = {
+      ad_id: ad_id,
+      is_active: active,
+      user_id: this.authService.getMyId()
+    }
+
+    console.dir(body);
+
+    return this.http.post(host + this.PATH + this.CHANGE_ACTIVE_AD, body);
   }
 
 }

@@ -13,7 +13,7 @@ def create_app(test_config=None):
     )
     app.config['DEBUG_TB_PANELS'] = ['flask_mongoengine.panels.MongoDebugPanel']
 
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/test"
+    app.config["MONGO_URI"] = 'mongodb+srv://adhub-db:adhub@adhub-db-mongo-jvmht.azure.mongodb.net/adhub-db-mongo?retryWrites=true&w=majority'
 
     from .db import mongo
     mongo.init_app(app)

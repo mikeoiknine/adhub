@@ -31,7 +31,7 @@
             <span>
               Ad Info
               <ul class="ad-info">
-                <li>Id: {{ad.ad_id}}</li>
+                <li>Id: {{ad._id}}</li>
                 <li>Name: {{ad.name}}</li>
                 <li>Uploaded on : {{ad.upload_date | date}}</li>
                 <li>Display Locations : {{ad.region}}</li>
@@ -50,13 +50,13 @@
             <span>
               Actions
               <ul class="ad-info">
-              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+              <li><mat-slide-toggle [checked]="ad.is_active" (change)="changeActiveState(ad, !ad.is_active)">Active</mat-slide-toggle></li>
                 <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>
             </span>
 
-          </div>s
+          </div>
 
           <img class="ad-image" src="{{ad.image_64}}" width="20%">
 
@@ -90,7 +90,7 @@
          <span>
               Ad Info
               <ul class="ad-info">
-                <li>Id: {{ad.ad_id}}</li>
+                <li>Id: {{ad._id}}</li>
                 <li>Name: {{ad.name}}</li>
                 <li>Uploaded on : {{ad.upload_date | date}}</li>
                 <li>Display Locations : {{ad.region}}</li>
@@ -109,7 +109,7 @@
             <span>
               Actions
               <ul class="ad-info">
-              <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
+              <li><mat-slide-toggle [checked]="ad.is_active" (change)="changeActiveState(ad, !ad.is_active)">Active</mat-slide-toggle></li>
                 <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>

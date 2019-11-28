@@ -1,1 +1,7 @@
 flask
+dnspython
+pymongo
+schedule
+flask
+Flask-Cors
+Flask-Debug

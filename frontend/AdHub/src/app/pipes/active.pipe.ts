@@ -14,9 +14,9 @@ export class ActivePipe implements PipeTransform {
     // kept, false will be filtered out
     return items.filter(item => {
       if(filter === 'inactive') {
-        return !item.active;
+        return !item.is_active;
       }else{
-        return item.active;
+        return item.is_active;
       }
     });
   }

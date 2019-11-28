@@ -70,9 +70,10 @@ export class DashboardComponent implements OnInit {
       if (result) {
 
         this.adService.uploadAd(result['name'], result['type'], result['location'], result['base64'])
-          .subscribe(() => {
+          .subscribe((ad) => {
+
             this.allAds.push({
-              ad_id: '1',
+              _id: ad['ad_id'],
               stats: {
                 total_view_count: 0,
                 year_view_count: 0,
@@ -81,7 +82,7 @@ export class DashboardComponent implements OnInit {
               } as AdItemStats,
               region: result['location'],
               uploaded_date: new Date(),
-              active: true,
+              is_active: true,
               category: result['type'],
               name: result['name'],
               user_id: this.user.id,
@@ -111,13 +112,20 @@ export class DashboardComponent implements OnInit {
   }
 
   changeActiveState(item: AdItem, state: boolean) {
+    const ad_id = this.allAds.find((ad) => ad === item)._id;
+    this.adService.setActiveStatus(ad_id, state).subscribe(() => {
+        this.allAds.find((ad) => ad === item).is_active = state;
+      }, (error) => {
+      this.snackBar.open('Could not change active status of ad with id: ' + ad_id + ' Error: ' + error.error.message, '', {
+        duration: 1000,
+      });
+    });
 
-    this.allAds.find((ad) => ad === item).active = state;
   }
 
   deleteAd(id: string) {
 
-    const adToDelete = this.allAds.find((ad) => ad.ad_id === id);
+    const adToDelete = this.allAds.find((ad) => ad._id === id);
 
     this.adService.deleteAd(id).subscribe(() => {
       this.snackBar.open('Ad deleted: ' + adToDelete.name, '', {
@@ -164,7 +172,13 @@ export class DashboardComponent implements OnInit {
       console.log('Got image: ' + this.viewingImageID);
 
     }, (error) => {
-      console.log('Got image: ' + this.viewingImageID);
+      if(error.error.code === 510){
+        this.snackBar.open('No image matches the your location and category', '', {
+          duration: 2000
+        });
+      }else {
+        console.log('Cannot connect to server');
+      }
       this.closeAdStreaming();
     });
   }

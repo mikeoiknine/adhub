@@ -1,5 +1,5 @@
 export interface AdItem {
-  ad_id: string;
+  _id: string;
   name: string;
   user_id: string;
   category: string;
@@ -8,7 +8,7 @@ export interface AdItem {
   region: string[];
   stats: AdItemStats;
   uploaded_date: Date;
-  active: Boolean;
+  is_active: Boolean;
 }
 
 export interface AdItemStats {
