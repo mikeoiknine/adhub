@@ -1,5 +1,6 @@
 import os
 import sys
+import base64, uuid
 import random
 import math
 import re
@@ -45,7 +46,7 @@ def load_image(image_path):
         image = image[..., :3]
     return image
 
-def prediction(image_path):
+def prediction(img_64):
     # Directory of saved logs and trained models
     MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
@@ -75,8 +76,16 @@ def prediction(image_path):
     dataset.load_gns(GNS_DIR, "val")
     dataset.prepare()
 
-    image = load_image(image_path)
-    bad_image_path = "../../../procdata/bad_samples/" +  image_path.split('/')[-1]
+    # Remove comma and decode
+    img_64 = img_64.split(',', 1)[-1]
+    imgdata = base64.b64decode(img_64)
+
+    # make local jpg file with image data
+    filename = "test.jpg"
+    with open(filename, 'wb') as f:
+        f.write(imgdata)
+    image = load_image(filename)
+    bad_image_path = "../../../procdata/bad_samples/" + filename
 
     # Run object detection
     results = model.detect([image], verbose=1)
@@ -88,8 +97,7 @@ def prediction(image_path):
 
     # If 0 instances of any bad images found, then image is kept
     if r['scores'].shape[0] == 0:
-        # Store to MongoDB
-        pass
+        return True
     else:
         # Construct Pyplot
         plt = visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], 
@@ -102,4 +110,4 @@ def prediction(image_path):
         # Or save bad image pyplot in MongoDB separate folder if needed
         plt.savefig(bad_image_path)
 
-prediction("../../../procdata/test/test3.jpg")
+        return False
