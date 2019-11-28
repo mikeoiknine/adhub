@@ -18,6 +18,8 @@ export class AdvertisementService {
   private readonly GET_MY_ADS = 'ads';
   private readonly DELETE_AD = 'delete';
   private readonly CHANGE_ACTIVE_AD = 'setactive';
+  private readonly REVENUE = 'myrevenue';
+  private readonly EXPENSES = 'myexpense';
 
   private periodicSubscriber: Observable<any>;
 
@@ -47,7 +49,7 @@ export class AdvertisementService {
     const body = {
       user_id: this.authService.getMyId(),
       category: included
-    }
+    };
     return this.http.post(host + this.PATH + this.CONFIG_PATH, body);
   }
 
@@ -77,11 +79,21 @@ export class AdvertisementService {
       ad_id: ad_id,
       is_active: active,
       user_id: this.authService.getMyId()
-    }
-
-    console.dir(body);
+    };
 
     return this.http.post(host + this.PATH + this.CHANGE_ACTIVE_AD, body);
   }
+
+  getExpenses(){
+    const params = new HttpParams().set('user_id', this.authService.getMyId());
+
+    return this.http.get(host + this.PATH + this.EXPENSES, {params: params});
+  }
+  getRevenue(){
+    const params = new HttpParams().set('user_id', this.authService.getMyId());
+
+    return this.http.get(host + this.PATH + this.REVENUE, {params: params});
+  }
+
 
 }

@@ -33,6 +33,10 @@ export class DashboardComponent implements OnInit {
   private viewingImage: string = null;
   private viewingImageID: string = null;
 
+  private expenses = 0;
+  private revenue = 0;
+
+
   private activeSubscription: Subscription = null;
 
   constructor(private adService: AdvertisementService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
@@ -50,8 +54,27 @@ export class DashboardComponent implements OnInit {
         duration: 2000
       });
     });
+
     this.authService.getMe().subscribe((result) => {
         this.user = result;
+      },
+      (error) => {
+        this.snackBar.open('Cannot connect to server. Try again', '', {
+          duration: 2000
+        });
+      });
+
+    this.adService.getExpenses().subscribe((result) => {
+        this.expenses = result['expense'];
+      },
+      (error) => {
+        this.snackBar.open('Cannot connect to server. Try again', '', {
+          duration: 2000
+        });
+      });
+
+    this.adService.getRevenue().subscribe((result) => {
+        this.revenue = result['revenue'];
       },
       (error) => {
         this.snackBar.open('Cannot connect to server. Try again', '', {
@@ -172,7 +195,7 @@ export class DashboardComponent implements OnInit {
       console.log('Got image: ' + this.viewingImageID);
 
     }, (error) => {
-      if(error.error.code === 510){
+      if(error.status === 510){
         this.snackBar.open('No image matches the your location and category', '', {
           duration: 2000
         });

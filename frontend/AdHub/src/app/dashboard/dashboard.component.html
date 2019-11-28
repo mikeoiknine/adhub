@@ -2,6 +2,10 @@
 <div class="body" *ngIf="!viewerEnable">
   <mat-toolbar class="toolbar">
     <img class="logo" src="../../assets/images/logo_extracted.png">
+    <span class="revenue-expenses">
+      <p class="revenue" > Revenue: {{revenue}}$</p>
+      <p class="expenses" > Expenses: {{expenses}}$</p>
+    </span>
     <div class="inner-toolbar">
       <p>Hi {{user?.name}}</p>
       <span class="logout-container">
