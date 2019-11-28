@@ -64,6 +64,15 @@ def download_all_blobs():
 def download_blob(blob_name):
     block_blob_service.get_blob_to_path(container_name, blob_name, blob_name)
 
+    # Convert jpg to base64 string
+    with open(blob_name, "rb") as img_file:
+        b64_string = base64.b64encode(img_file.read())
+
+    # Delete jpg 
+    os.remove(blob_name)
+
+    return b64_string
+
 def delete_blob(blob_name):
     block_blob_service.delete_blob(container_name, blob_name)
 
