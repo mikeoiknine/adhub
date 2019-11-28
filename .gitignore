@@ -125,6 +125,8 @@ dmypy.json
 .pyre/
 
 
+server/.idea/
+
 frontend/AdHub/.vs/
 
 server/.idea/

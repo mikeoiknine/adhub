@@ -2,6 +2,7 @@ from bson.objectid import ObjectId
 from flask import (
     Blueprint, request, jsonify
 )
+from .image_classification.Mask_RCNN.sample.guns_and_swords.predict import prediction
 
 from . import helper
 from .db import mongo
@@ -75,6 +76,8 @@ def add_item():
 
     # Save image in Azure Blob for this user
 
+    if not prediction(content['image_64']):
+        return jsonify({'msg': 'Failed Ai'}), 512
 
     # Add advertisement item
     ads = mongo.db.advertisements
