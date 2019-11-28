@@ -48,6 +48,8 @@ def get_user_ads():
                 print("Appending:", ad_item['name'])
                 # Removing $oid tag
                 ad_item['_id'] = str(ad_item['_id'])
+                # getting from blob
+                ad_item['image_64'] = helper.download_blob(str(ad_item['_id']))
                 data.append(ad_item)
             else:
                 print("Ad with id:", ad_id, "is None")
@@ -73,8 +75,7 @@ def add_item():
     content = request.json
 
     # Save image in Azure Blob for this user
-    ad_id = uuid.uuid1()
-    image_path = helper.decode_image(ad_id, content['image_64'])
+
 
     # Add advertisement item
     ads = mongo.db.advertisements
@@ -94,6 +95,10 @@ def add_item():
                 'total_view_count': 0
                 }
             })
+
+    image_path = helper.decode_image(str(ad_id), content['image_64'])
+
+    ads.update({'_id': ad_id}, {'$set': {'image_path': image_path}})
 
     # Add this ad to the user
     mongo.db.users.update(
@@ -127,6 +132,9 @@ def remove_ad_item():
 
     # Remove this ad from the advertisement
     mongo.db.advertisements.remove( {'_id': ObjectId(content['ad_id']) } )
+
+    #remove from azure
+    helper.delete_blob(content['ad_id'])
 
     # Remove this ad from the users ad list
     mongo.db.users.update( {'_id': ObjectId(content['user_id']) }, {"$pull": {"ads": content['ad_id']} } )
@@ -239,6 +247,9 @@ def get_next_ad():
             { '$inc': { 'stats.total_view_count': 1, 'stats.year_view_count': 1, 'stats.month_view_count': 1, 'stats.day_view_count': 1} } ,
             upsert=True
         )
+
+        #get image from blob bucket
+        ad['image_64'] = helper.download_blob(str(ad['_id']))
 
         print("returning ad:", ad['_id'])
         return jsonify({'msg': 'Success!',
