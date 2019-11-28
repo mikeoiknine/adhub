@@ -55,7 +55,7 @@
               Actions
               <ul class="ad-info">
               <li><mat-slide-toggle [checked]="ad.is_active" (change)="changeActiveState(ad, !ad.is_active)">Active</mat-slide-toggle></li>
-                <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
+                <li><button mat-icon-button (click)="deleteAd(ad._id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>
             </span>
@@ -114,7 +114,7 @@
               Actions
               <ul class="ad-info">
               <li><mat-slide-toggle [checked]="ad.is_active" (change)="changeActiveState(ad, !ad.is_active)">Active</mat-slide-toggle></li>
-                <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
+                <li><button mat-icon-button (click)="deleteAd(ad._id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>
             </span>

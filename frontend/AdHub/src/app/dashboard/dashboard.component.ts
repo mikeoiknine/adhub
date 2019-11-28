@@ -68,18 +68,12 @@ export class DashboardComponent implements OnInit {
         this.expenses = result['expense'];
       },
       (error) => {
-        this.snackBar.open('Cannot connect to server. Try again', '', {
-          duration: 2000
-        });
       });
 
     this.adService.getRevenue().subscribe((result) => {
         this.revenue = result['revenue'];
       },
       (error) => {
-        this.snackBar.open('Cannot connect to server. Try again', '', {
-          duration: 2000
-        });
       });
   }
 

@@ -49,7 +49,7 @@ def get_user_ads():
                 # Removing $oid tag
                 ad_item['_id'] = str(ad_item['_id'])
                 # getting from blob
-                ad_item['image_64'] = helper.download_blob(str(ad_item['_id']))
+                ad_item['image_64'] = helper.download_blob(str(ad_item['_id']) + '.jpg')
                 data.append(ad_item)
             else:
                 print("Ad with id:", ad_id, "is None")
@@ -134,7 +134,7 @@ def remove_ad_item():
     mongo.db.advertisements.remove( {'_id': ObjectId(content['ad_id']) } )
 
     #remove from azure
-    helper.delete_blob(content['ad_id'])
+    helper.delete_blob(content['ad_id'] + '.jpg')
 
     # Remove this ad from the users ad list
     mongo.db.users.update( {'_id': ObjectId(content['user_id']) }, {"$pull": {"ads": content['ad_id']} } )
@@ -222,6 +222,8 @@ def get_next_ad():
         if 'region' in user_config and user_config['region'] != "":
             filter_by['region'] = { '$elemMatch' : {'$eq' : user_config['region']} }
 
+        filter_by['is_active'] = True
+
     print("Filters applied:", filter_by)
     ads = advertisements.find(filter_by).sort([('total_view_count', -1)])
 
@@ -249,7 +251,7 @@ def get_next_ad():
         )
 
         #get image from blob bucket
-        ad['image_64'] = helper.download_blob(str(ad['_id']))
+        ad['image_64'] = helper.download_blob(str(ad['_id']) + '.jpg')
 
         print("returning ad:", ad['_id'])
         return jsonify({'msg': 'Success!',
@@ -340,6 +342,9 @@ def get_expense():
 
     # Get all ads for this user
     users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+
+    if 'ads' not in users_ads:
+        return jsonify({'msg': 'No ads'}), 510
 
     total_views = 0
     for ad in users_ads['ads']:

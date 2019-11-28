@@ -28,4 +28,4 @@ export interface User {
 }
 
 export const LOCATIONS = ['Downtown, Montreal', 'Old Montreal, Montreal', 'Plateau Mont-Royal, Montreal', 'Cotes-des-Neige, Montreal', 'West Island, Montreal', 'Verdun, Montreal', 'Westmount, Montreal', 'Outremont, Montreal', 'South West, Montreal', 'Hochelaga-Maisonneuve, Montreal'];
-export const TYPES = ['Food', 'Car Dealership', 'Furniture', 'Fitness'];
+export const TYPES = ['Food', 'Car Dealership', 'Furniture', 'Fitness', 'Technology'];

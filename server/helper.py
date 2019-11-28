@@ -71,7 +71,7 @@ def download_blob(blob_name):
     # Delete jpg 
     os.remove(blob_name)
 
-    return b64_string
+    return 'data:image/jpeg;base64,' + b64_string.decode("utf-8")
 
 def delete_blob(blob_name):
     block_blob_service.delete_blob(container_name, blob_name)
