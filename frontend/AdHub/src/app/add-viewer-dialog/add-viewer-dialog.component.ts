@@ -25,7 +25,7 @@ export class AddViewerDialogComponent implements OnInit {
 
     if(save){
       this.dialogRef.close({
-        excluded_types: this.includedTypeController.value
+        included_types: this.includedTypeController.value
       });
     }else{
       this.dialogRef.close(null);

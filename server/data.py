@@ -1,4 +1,5 @@
 import uuid
+import json
 from bson.objectid import ObjectId
 from flask import (
         Blueprint, request, jsonify, g, session
@@ -37,14 +38,14 @@ def get_user_ads():
 
     print("User ads:", users_ads)
 
-    data = {}
+    data = []
     ads = mongo.db.advertisements
     if users_ads.get('ads', None) is not None:
         for ad_id in users_ads['ads']:
             ad_item = ads.find_one( {'_id': ObjectId(ad_id) }, {'_id': 0} )
             if ad_item is not None:
                 print("Appending:", ad_item['name'])
-                data[ad_id] = ad_item
+                data.append(ad_item)
             else:
                 print("Ad with id:", ad_id, "is None")
 
@@ -105,6 +106,9 @@ def add_item():
 
     content = request.get_json()
 
+
+    print(content)
+
     # Save image in Azure Blob for this user
     ad_id = uuid.uuid1()
     image_path = helper.decode_image(ad_id, content['image_64'])
@@ -149,8 +153,8 @@ def remove_ad_item():
     if request.method != 'DELETE':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.get_json()
-    users_ads = mongo.db.users.find_one( { '_id': ObjectId(content['user_id']) }, {'_id': 0, 'ads': 1} )
+    content = request.args
+    users_ads = mongo.db.users.find_one({'_id': ObjectId(content['user_id'])})
     if users_ads is None:
         return jsonify({'msg': 'Invalid request - No ads for this user'})
 
@@ -183,8 +187,9 @@ def set_user_config():
     content = request.get_json()
 
     config_file = {}
-    if 'region' in content:
-        config_file['region'] = content['region']
+    if 'user_id' in content:
+        user = mongo.db.users.find_one({'_id': ObjectId(content['user_id'])})
+        config_file['region'] = user['location']
 
     if 'category' in content:
         config_file['category'] = content['category']
@@ -213,7 +218,7 @@ def get_ad_stats():
 
     return jsonify({'msg': 'Success!', 'stats': ad['stats']})
 
-@bp.route('/next', methods=['POST'])
+@bp.route('/next', methods=['GET'])
 def get_next_ad():
     """
     Returns the next ad item. The ad with the lowest view count
@@ -227,10 +232,10 @@ def get_next_ad():
     user_id: User making the request
     last_ad_id: Id of the most previous advertisement, empty if this is the first
     """
-    if request.method != 'POST':
+    if request.method != 'GET':
         return jsonify({'msg': 'Invalid request type'})
 
-    content = request.get_json()
+    content = request.args
     user_config = mongo.db.users_config.find_one({'_id': ObjectId(content['user_id'])})
     print("User Config is:", user_config)
     print("Requested filters:", content)
@@ -239,7 +244,7 @@ def get_next_ad():
     filter_by = {}
     if user_config is not None:
         if 'category' in user_config and user_config['category'] != "":
-            filter_by['category'] = user_config['category']
+            filter_by['category'] = {"$in" : user_config['category']}
 
         if 'region' in user_config and user_config['region'] != "":
             filter_by['region'] = user_config['region']
@@ -248,7 +253,7 @@ def get_next_ad():
     ads = adverts.find(filter_by).sort([('total_view_count', -1)])
 
     if ads.count() == 0:
-        return jsonify({'msg': 'No image matching query'})
+        return jsonify({'msg': 'No image matching query'}), 500
 
     if ads.count() == 1:
         mongo.db.advertisements.update(

@@ -3,7 +3,7 @@
   <mat-toolbar class="toolbar">
     <img class="logo" src="../../assets/images/logo_extracted.png">
     <div class="inner-toolbar">
-      <p>Hi {{user.name}}</p>
+      <p>Hi {{user?.name}}</p>
       <span class="logout-container">
         <button id="logout" mat-flat-button color="warn" (click)="logout()">Logout</button>
       </span>
@@ -23,7 +23,7 @@
             {{ad.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{ad.uploadedDate | date:'medium' }}
+            {{ad.upload_date | date:'medium' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="outer-pannel-description">
@@ -31,18 +31,19 @@
             <span>
               Ad Info
               <ul class="ad-info">
-                <li>Id: {{ad.name}}</li>
-                <li>Name: {{ad.id}}</li>
-                <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
-                <li>Display Locations : {{ad.location}}</li>
+                <li>Id: {{ad.ad_id}}</li>
+                <li>Name: {{ad.name}}</li>
+                <li>Uploaded on : {{ad.upload_date | date}}</li>
+                <li>Display Locations : {{ad.region}}</li>
               </ul>
             </span>
             <span>
               Ad Stats
               <ul class="ad-info">
-                <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
-                <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
-                <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
+                <li>Day: {{ad.stats.day_view_count}}</li>
+                <li>Month: {{ad.stats.month_view_count}}</li>
+                <li>Year : {{ad.stats.year_view_count}}</li>
+                <li>Total : {{ad.stats.total_view_count}}</li>
 
               </ul>
             </span>
@@ -50,12 +51,12 @@
               Actions
               <ul class="ad-info">
               <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
-                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>
             </span>
 
-          </div>
+          </div>s
 
           <img class="ad-image" src="{{ad.image_64}}" width="20%">
 
@@ -81,33 +82,35 @@
             {{ad.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{ad.uploadedDate | date:'medium' }}
+            {{ad.upload_date | date:'medium' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="outer-pannel-description">
           <div class="expansion-description">
-          <span>
-            Ad Info
-            <ul class="ad-info">
-              <li>Id: {{ad.name}}</li>
-              <li>Name: {{ad.id}}</li>
-              <li>Uploaded on : {{ad.uploadedDate | date:'short'}}</li>
-              <li>Display Locations : {{ad.location}}</li>
-            </ul>
-          </span>
+         <span>
+              Ad Info
+              <ul class="ad-info">
+                <li>Id: {{ad.ad_id}}</li>
+                <li>Name: {{ad.name}}</li>
+                <li>Uploaded on : {{ad.upload_date | date}}</li>
+                <li>Display Locations : {{ad.region}}</li>
+              </ul>
+            </span>
             <span>
-            Ad Stats
-            <ul class="ad-info">
-              <li>Day: {{ad.stats.numberOfTimeSeeDay}}</li>
-              <li>Week: {{ad.stats.numberOfTimeSeeWeek}}</li>
-              <li>Month : {{ad.stats.numberOfTimeSeeMonth}}</li>
-            </ul>
-          </span>
+              Ad Stats
+              <ul class="ad-info">
+                <li>Day: {{ad.stats.day_view_count}}</li>
+                <li>Month: {{ad.stats.month_view_count}}</li>
+                <li>Year : {{ad.stats.year_view_count}}</li>
+                <li>Total : {{ad.stats.total_view_count}}</li>
+
+              </ul>
+            </span>
             <span>
               Actions
               <ul class="ad-info">
               <li><mat-slide-toggle [checked]="ad.active" (change)="changeActiveState(ad, !ad.active)">Active</mat-slide-toggle></li>
-                <li><button mat-icon-button (click)="deleteAd(ad.id)"><mat-icon>delete</mat-icon>
+                <li><button mat-icon-button (click)="deleteAd(ad.ad_id)"><mat-icon>delete</mat-icon>
                     </button> Delete </li>
               </ul>
             </span>

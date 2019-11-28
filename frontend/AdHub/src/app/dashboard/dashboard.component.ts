@@ -40,18 +40,24 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.adService.getMyAds().subscribe((result) => {
-      this.allAds = Array.from( result['ads'].values());
-    }, ()=> {
+      const ads = (result['ads'] as Array<any>).map((item) => {
+        item['upload_date'] = new Date(item['upload_date']);
+        return item;
+      });
+      this.allAds = ads;
+    }, () => {
       this.snackBar.open('Cannot connect to server. Try again', '', {
         duration: 2000
       });
     });
-    this.authService.getMe().subscribe((result) =>{
+    this.authService.getMe().subscribe((result) => {
         this.user = result;
       },
       (error) => {
-        console.log('Error when fetching active user');
-    });
+        this.snackBar.open('Cannot connect to server. Try again', '', {
+          duration: 2000
+        });
+      });
   }
 
   openAdUploadDialog() {
@@ -63,23 +69,26 @@ export class DashboardComponent implements OnInit {
 
       if (result) {
 
-        this.adService.uploadAd(result['name'],result['category'], result['location'],result['base_64'])
+        this.adService.uploadAd(result['name'], result['type'], result['location'], result['base64'])
           .subscribe(() => {
             this.allAds.push({
-            id: '1',
-            stats: {
-              numberOfTimeSeeMonth: 0,
-              numberOfTimeSeeWeek: 0,
-              numberOfTimeSeeDay: 0
-            },
-            uploadedDate: new Date(),
-            active: true,
-            category: result['type'],
-            name: result['name'],
-            userId: this.user.id,
-            imagePath: 'some path',
-            image_64: result['base64']
-          });}, (error) => {
+              ad_id: '1',
+              stats: {
+                total_view_count: 0,
+                year_view_count: 0,
+                month_view_count: 0,
+                day_view_count: 0
+              } as AdItemStats,
+              region: result['location'],
+              uploaded_date: new Date(),
+              active: true,
+              category: result['type'],
+              name: result['name'],
+              user_id: this.user.id,
+              image_path: 'some path',
+              image_64: result['base64']
+            });
+          }, (error) => {
             console.log('Error when uploading image' + error.error.message);
           });
       }
@@ -95,8 +104,7 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-        this.viewerEnable = true;
-        this.viewingImage = image_base_64;
+        this.startStreamingAds(result['included_types']);
       }
     });
 
@@ -107,25 +115,25 @@ export class DashboardComponent implements OnInit {
     this.allAds.find((ad) => ad === item).active = state;
   }
 
-  deleteAd(id: string){
+  deleteAd(id: string) {
 
-  const adToDelete = this.allAds.find((ad) => ad.id === id);
+    const adToDelete = this.allAds.find((ad) => ad.ad_id === id);
 
     this.adService.deleteAd(id).subscribe(() => {
-      this.snackBar.open('Ad deleted: ' +adToDelete.name , '',{
+      this.snackBar.open('Ad deleted: ' + adToDelete.name, '', {
         duration: 1000,
-      } );
+      });
 
       this.allAds.splice(this.allAds.indexOf(adToDelete), 1);
 
     }, (error) => {
-      this.snackBar.open('Could not delete ad with id: '+  id + ' Error: '+ error.error.message, '',{
+      this.snackBar.open('Could not delete ad with id: ' + id + ' Error: ' + error.error.message, '', {
         duration: 1000,
-      } );
+      });
     });
   }
 
-  logout(){
+  logout() {
     this.authService.logout();
   }
 
@@ -133,20 +141,35 @@ export class DashboardComponent implements OnInit {
     await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log('fired'));
   }
 
-  async startStreamingAds(included: string[]){
-    await this.adService.sendConfiguration(included);
+  async startStreamingAds(included: string[]) {
+    await this.adService.sendConfiguration(included).subscribe(() => {
 
-    this.activeSubscription = this.adService.startStreaming().subscribe(() => {
-      this.adService.getNextAdd(this.viewingImageID).subscribe( (obj) => {
-        this.viewingImageID = obj['ad_id'];
-        this.viewingImageID = obj['image_64'];
-      }, (error) => {
-        this.closeAdStreaming();
+     this.getNextAd();
+
+      this.activeSubscription = this.adService.startStreaming().subscribe(() => {
+        this.getNextAd();
       });
+    }, () => {
+      this.snackBar.open('Cannot connect to server. Try again', '', {
+      duration: 2000
+    }); });
+  }
+
+  getNextAd(){
+    // Get first ad
+    this.adService.getNextAdd(this.viewingImageID).subscribe((obj) => {
+      this.viewerEnable = true;
+      this.viewingImageID = obj['ad_id'];
+      this.viewingImage = obj['image_64'];
+      console.log('Got image: ' + this.viewingImageID);
+
+    }, (error) => {
+      console.log('Got image: ' + this.viewingImageID);
+      this.closeAdStreaming();
     });
   }
 
-  closeAdStreaming(){
+  closeAdStreaming() {
     this.viewerEnable = false;
     this.viewingImage = null;
     this.activeSubscription.unsubscribe();

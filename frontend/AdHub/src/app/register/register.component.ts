@@ -36,7 +36,7 @@ export class RegisterComponent implements OnInit {
       this.registerForm.get('nameController').value,
       this.registerForm.get('emailController').value,
       this.registerForm.get('passwordController').value,
-      this.registerForm.get('locationForm').value,
+      this.registerForm.get('locationController').value,
       this.registerForm.get('businessController').value
     );
   }

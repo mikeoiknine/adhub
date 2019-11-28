@@ -1,19 +1,21 @@
 export interface AdItem {
-  id: string;
+  ad_id: string;
   name: string;
-  userId: string;
+  user_id: string;
   category: string;
-  imagePath: string;
+  image_path: string;
   image_64: string;
+  region: string[];
   stats: AdItemStats;
-  uploadedDate: Date;
+  uploaded_date: Date;
   active: Boolean;
 }
 
 export interface AdItemStats {
-  numberOfTimeSeeMonth: number;
-  numberOfTimeSeeDay: number;
-  numberOfTimeSeeWeek: number;
+  total_view_count: number;
+  year_view_count: number;
+  month_view_count: number;
+  day_view_count: number;
 }
 
 export interface User {

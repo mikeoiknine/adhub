@@ -16,7 +16,7 @@ export class AdvertisementService {
   private readonly ADD_AD = 'add';
   private readonly NEXT = 'next';
   private readonly GET_MY_ADS = 'ads';
-  private readonly DELETE_AD = 'DELETE';
+  private readonly DELETE_AD = 'delete';
   private readonly CHANGE_ACTIVE_AD = '';
 
   private periodicSubscriber: Observable<any>;
@@ -32,9 +32,10 @@ export class AdvertisementService {
       name: name,
       user_id: this.authService.getMyId(),
       region: locations,
-      upload_date: Date(),
+      upload_date: JSON.stringify(Date()),
       category: category,
-      image_64: image_64
+      image_64: image_64,
+      active: true
     };
     return this.http.post(host + this.PATH + this.ADD_AD, body);
   }
@@ -47,7 +48,11 @@ export class AdvertisementService {
   }
 
   sendConfiguration(included: string[]){
-    return this.http.post(host + this.PATH + this.CONFIG_PATH, included);
+    const body = {
+      user_id: this.authService.getMyId(),
+      category: included
+    }
+    return this.http.post(host + this.PATH + this.CONFIG_PATH, body);
   }
 
   startStreaming(): Observable<any>{

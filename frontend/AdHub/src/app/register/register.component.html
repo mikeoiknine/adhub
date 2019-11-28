@@ -18,7 +18,7 @@
 
         <mat-form-field>
           <mat-label>Neighborhood</mat-label>
-          <mat-select formGroupName="locationController">
+          <mat-select formControlName="locationController">
             <mat-option *ngFor="let location of LOCATIONS" [value]="location">
               {{location}}
             </mat-option>
@@ -39,7 +39,7 @@
 
 
 
-        <button mat-flat-button color="primary" (click)="sendLoginCredentials()" [disabled]="registerForm.invalid || registerForm.pristine">Login</button>
+        <button mat-flat-button color="primary" (click)="sendRegistration()" [disabled]="registerForm.invalid || registerForm.pristine">Register</button>
       </form>
     </div>
   </mat-card>
