@@ -262,10 +262,10 @@ def get_next_ad():
     if user_config is not None:
         print("applying filters...")
         if 'category' in user_config and user_config['category'] != "":
-            filter_by['category'] = user_config['category']
+            filter_by['category'] = { '$in' : user_config['category'] }
 
         if 'region' in user_config and user_config['region'] != "":
-            filter_by['region'] = "{ '$nin' : user_config['region'] }"
+            filter_by['region'] = { '$elemMatch' : {'$eq' : user_config['region']} }
 
     print("Filters applied:", filter_by)
     ads = advertisements.find(filter_by).sort([('total_view_count', -1)])
