@@ -15,6 +15,7 @@ export class AdUploaderComponent implements OnInit {
   private locations = LOCATIONS;
   private base64File = null;
   private file :File = null;
+  private showError = false;
   private uploadForm = new FormGroup({
       nameController: new FormControl('', [Validators.required]),
       typeController: new FormControl('', [Validators.required]),
@@ -30,18 +31,23 @@ export class AdUploaderComponent implements OnInit {
 
   uploadFile(event) {
     this.file = event[0];
-      const reader = new FileReader();
+    const reader = new FileReader();
 
-
+    if(this.file.type !== 'image/jpeg') {
+      this.file = null;
+      this.showError = true;
+    }else {
+      this.showError = false;
       reader.onload = (e) => {
         const binaryString = reader.result;
         const base64textString = btoa(binaryString.toString());
-        this.base64File = 'data:'+ this.file.type + ';base64,' + base64textString;
+        this.base64File = 'data:' + this.file.type + ';base64,' + base64textString;
         console.log(this.base64File);
-      } ;
+      };
 
       this.base64File = reader.readAsBinaryString(this.file);
       console.log(this.base64File);
+    }
 
   }
 

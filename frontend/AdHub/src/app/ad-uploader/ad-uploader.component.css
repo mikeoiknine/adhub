@@ -68,3 +68,10 @@
 .field-holder{
   margin: 0 4em 0 4em;
 }
+
+.error{
+  color: #db3235;
+  margin-left: 9%;
+  margin-bottom: 3%;
+  font-weight: bolder;
+}
