@@ -4,6 +4,8 @@ schedule
 flask
 Flask-Cors
 Flask-Debug
+Werkzeug
+azure
 numpy
 scipy
 Pillow

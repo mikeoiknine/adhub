@@ -1,4 +1,6 @@
-import os, uuid, sys, base64
+import base64
+import os
+
 from azure.storage.blob import BlockBlobService, PublicAccess
 
 # Create the BlockBlockService that is used to call the Blob service for the storage account

@@ -1,6 +1,5 @@
 from __future__ import print_function
 import sys
-import functools
 
 from flask import (
         Blueprint, request, jsonify, g, session, make_response

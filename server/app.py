@@ -1,12 +1,12 @@
-import schedule
 import datetime
-from flask import Flask
 
+import schedule
+from bson import json_util
 from flask.json import JSONEncoder
 
 from . import create_app
-from bson import json_util
 from .db import mongo
+
 
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj): return json_util.default(obj)

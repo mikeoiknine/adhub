@@ -1,11 +1,10 @@
-import uuid
-import json
 from bson.objectid import ObjectId
 from flask import (
-        Blueprint, request, jsonify, g, session
+    Blueprint, request, jsonify
 )
-from .db import mongo
+
 from . import helper
+from .db import mongo
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
