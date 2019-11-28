@@ -4,8 +4,10 @@ schedule
 flask
 Flask-Cors
 Flask-Debug
+Flask-DebugToolbar
 Werkzeug
 azure
+Flask-PyMongo
 # numpy
 # scipy
 # Pillow
