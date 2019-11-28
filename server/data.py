@@ -5,6 +5,7 @@ from flask import (
 )
 from db import mongo
 import helper
+from .image_classification.Mask_RCNN.sample.guns_and_swords.predict import prediction
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
@@ -70,6 +71,9 @@ def add_item():
     # Save image in Azure Blob for this user
     ad_id = uuid.uuid1()
     image_path = helper.decode_image(ad_id, content['image_64'])
+
+    if not prediction(content['image_64']):
+        return jsonify({'msg': 'Failed Ai'}), 512
 
     # Add advertisement item
     ads = mongo.db.advertisements
