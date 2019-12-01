@@ -4,7 +4,7 @@ import os
 from azure.storage.blob import BlockBlobService, PublicAccess
 
 # Create the BlockBlockService that is used to call the Blob service for the storage account
-block_blob_service = BlockBlobService(account_name='adbucket', account_key='+Gxx83Ptj2iOe5kXZJ3lky3Zx45jLpIqRKQZvInIDUHZla48EsoFQ67L0RKhzGzyOhGvy8geIlDMNMngmnrgjA==')
+block_blob_service = BlockBlobService(account_name='<name>', account_key='<key>')
 container_name = "images"
 
 # Uploads received base64 image to Azure blob Storage
@@ -80,5 +80,3 @@ def delete_blob(blob_name):
 
 def delete_container(cont_name):
     block_blob_service.delete_container(cont_name)
-
-#download_blob("096bb616-113a-11ea-8127-802bf91a7257.jpg")
