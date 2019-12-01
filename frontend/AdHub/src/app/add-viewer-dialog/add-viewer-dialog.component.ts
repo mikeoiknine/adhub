@@ -10,7 +10,7 @@ import {MatDialogRef} from '@angular/material';
 export class AddViewerDialogComponent implements OnInit {
 
   private readonly types = ['Food','Car','Furniture','Fitness'];
-  private excludedTypeController = new FormControl('');
+  private includedTypeController = new FormControl('');
 
 
   constructor(public dialogRef: MatDialogRef<AddViewerDialogComponent>) { }
@@ -21,11 +21,11 @@ export class AddViewerDialogComponent implements OnInit {
 
   closeDialog(save: boolean){
 
-    console.log(this.excludedTypeController.value);
+    console.log(this.includedTypeController.value);
 
     if(save){
       this.dialogRef.close({
-        excluded_types: this.excludedTypeController.value
+        included_types: this.includedTypeController.value
       });
     }else{
       this.dialogRef.close(null);

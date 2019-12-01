@@ -7,7 +7,7 @@ export const environment = {
   debug_login: false
 };
 
-export const host = 'http://localhost:5000';
+export const host = 'https://adhub424server.azurewebsites.net';
 
 /*
  * For easier debugging in development mode, you can import the following file

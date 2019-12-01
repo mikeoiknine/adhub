@@ -55,9 +55,9 @@ import {ActivePipe} from './pipes/active.pipe';
     MatDividerModule,
     MatSelectModule,
     MatDialogModule,
-    HttpClientModule,
+    MatSnackBarModule,
     MatSlideToggleModule,
-    MatSnackBarModule
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

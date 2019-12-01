@@ -1,8 +1,8 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FileService} from '../services/file.service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {connectableObservableDescriptor} from 'rxjs/internal/observable/ConnectableObservable';
+import {LOCATIONS, TYPES} from '../models/models';
 
 @Component({
   selector: 'app-ad-uploader',
@@ -11,37 +11,43 @@ import {connectableObservableDescriptor} from 'rxjs/internal/observable/Connecta
 })
 export class AdUploaderComponent implements OnInit {
 
-  private types = ['Food', 'Car Dealership', 'Furniture', 'Fitness'];
-  private locations = ['Downtown, Montreal', 'Old Montreal, Montreal', 'Plateau Mont-Royal, Montreal', 'Cotes-des-Neige, Montreal', 'West Island, Montreal', 'Verdun, Montreal', 'Westmount, Montreal', 'Outremont, Montreal', 'South West, Montreal', 'Hochelaga-Maisonneuve, Montreal'];
+  private types = TYPES;
+  private locations = LOCATIONS;
   private base64File = null;
   private file :File = null;
+  private showError = false;
   private uploadForm = new FormGroup({
       nameController: new FormControl('', [Validators.required]),
       typeController: new FormControl('', [Validators.required]),
       locationController: new FormControl('', [Validators.required])
     }
-  )
+  );
 
   constructor(private fileService: FileService, public dialogRef: MatDialogRef<AdUploaderComponent>) { }
 
   ngOnInit() {
-    //stop
+    // stop
   }
 
   uploadFile(event) {
     this.file = event[0];
-      const reader = new FileReader();
+    const reader = new FileReader();
 
-
+    if(this.file.type !== 'image/jpeg') {
+      this.file = null;
+      this.showError = true;
+    }else {
+      this.showError = false;
       reader.onload = (e) => {
         const binaryString = reader.result;
         const base64textString = btoa(binaryString.toString());
-        this.base64File = 'data:'+ this.file.type + ';base64,' + base64textString;
+        this.base64File = 'data:' + this.file.type + ';base64,' + base64textString;
         console.log(this.base64File);
-      } ;
+      };
 
       this.base64File = reader.readAsBinaryString(this.file);
       console.log(this.base64File);
+    }
 
   }
 

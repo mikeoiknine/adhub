@@ -9,7 +9,7 @@ import {AuthService} from '../services/auth.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup = new FormGroup({
-    emailController: new FormControl('', [Validators.required]),
+    emailController: new FormControl('', [Validators.required, Validators.email]),
     passwordController: new FormControl('', [Validators.required])
   });
   hide_Password = true;

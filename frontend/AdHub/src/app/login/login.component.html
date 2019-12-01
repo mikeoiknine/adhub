@@ -8,7 +8,7 @@
       <form [formGroup]="loginForm" class="action-container">
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput placeholder="twat@twat.com" formControlName="emailController">
+          <input matInput placeholder="mike.oiknine@adhub.com" formControlName="emailController">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -17,7 +17,7 @@
           <mat-icon class="cursor-pointer" matSuffix (mousedown)="showPassword()" (mouseup)="hidePassword()">{{hide_Password ? 'visibility_off' : 'visibility'}}</mat-icon>
         </mat-form-field>
 
-        <button mat-flat-button color="primary" (click)="sendLoginCredentials()" [disabled]="loginForm.invalid || loginForm.pristine">Login</button>
+        <button mat-flat-button color="warn" (click)="sendLoginCredentials()" [disabled]="loginForm.invalid || loginForm.pristine">Login</button>
         <p class="register-link-container">or <a routerLink="/register">Register</a></p>
       </form>
     </div>

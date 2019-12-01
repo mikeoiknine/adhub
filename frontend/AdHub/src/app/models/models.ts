@@ -1,27 +1,31 @@
 export interface AdItem {
-  id: String;
-  name: String;
-  userId: String;
-  imagePath: String;
-  image_64: String;
+  _id: string;
+  name: string;
+  user_id: string;
+  category: string;
+  image_path: string;
+  image_64: string;
+  region: string[];
   stats: AdItemStats;
-  uploadedDate: Date;
-  active: Boolean;
+  uploaded_date: Date;
+  is_active: Boolean;
 }
 
 export interface AdItemStats {
-  numberOfTimeSeeMonth: number;
-  numberOfTimeSeeDay: number;
-  numberOfTimeSeeWeek: number;
+  total_view_count: number;
+  year_view_count: number;
+  month_view_count: number;
+  day_view_count: number;
 }
 
 export interface User {
-  name: String;
-  id: String;
-  email: String;
-  company: String;
-  address: String;
-  adItems: AdItem[];
+  name: string;
+  id: string;
+  email: string;
+  company: string;
+  address: string;
+  ads: string[];
 }
 
 export const LOCATIONS = ['Downtown, Montreal', 'Old Montreal, Montreal', 'Plateau Mont-Royal, Montreal', 'Cotes-des-Neige, Montreal', 'West Island, Montreal', 'Verdun, Montreal', 'Westmount, Montreal', 'Outremont, Montreal', 'South West, Montreal', 'Hochelaga-Maisonneuve, Montreal'];
+export const TYPES = ['Food', 'Car Dealership', 'Furniture', 'Fitness', 'Technology'];

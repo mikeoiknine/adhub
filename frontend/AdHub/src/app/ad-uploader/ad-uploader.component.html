@@ -30,7 +30,7 @@
     <input hidden type="file" #fileInput (change)="uploadFile($event.target.files)">
   </div>
 
-
+  <div class="error" *ngIf="showError">Image is not JPEG</div>
   <div *ngIf="file" class="files-list">
     <p class="file-name"> {{ file.name }} </p>
     <button mat-icon-button class="delete-file" (click)="deleteAttachment(i)">
@@ -41,5 +41,5 @@
 
 <span class="button-holder">
   <button mat-flat-button color="primary" (click)="closeDialog(false)">Cancel</button>
-  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="uploadForm.invalid">Save</button>
+  <button mat-flat-button color="primary" (click)="closeDialog(true)" [disabled]="uploadForm.invalid || showError">Save</button>
 </span>
